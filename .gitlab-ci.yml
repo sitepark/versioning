@@ -1,0 +1,11 @@
+image: maven:3.9
+
+include:
+  - project: 'internal/gitlab-project-workflow'
+    ref: '1'
+    file:
+      - '/pipelines/stages.yml'
+      - '/pipelines/env/de_DE.yaml'
+      - '/pipelines/type/maven.yml'
+      - '/pipelines/addon/gitlab-release.yml'
+

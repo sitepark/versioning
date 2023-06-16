@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter xmlns="https://github.com/spotbugs/filter/3.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+
+	<Match>
+		<Bug pattern="SF_SWITCH_FALLTHROUGH"/>
+	</Match>
+
+	<Match>
+		<Class name="com.sitepark.versioning.Branch"/>
+		<Bug pattern="ES_COMPARING_STRINGS_WITH_EQ"/>
+	</Match>
+
+	<Match>
+		<Class name="com.sitepark.versioning.version.specification.element.boundary.Boundary$BoundaryComparator"/>
+		<Method name="compareBoundaries" parameter="Boundary,Boundary"/>
+		<Bug pattern="BC_UNCONFIRMED_CAST"/>
+	</Match>
+</FindBugsFilter>
