@@ -1,3 +1,6 @@
+[![codecov](https://codecov.io/gh/sitepark/versioning/branch/main/graph/badge.svg?token=68Mk5j1BY3)](https://codecov.io/gh/sitepark/versioning)
+[![Known Vulnerabilities](https://snyk.io/test/github/sitepark/versioning/badge.svg)](https://snyk.io/test/github/sitepark/versioning)
+
 # Sitepark Versioning
 
 Sitepark Versioning is a library, that provides reusable `Version` and `VersionsSpecification` classes and utilities.
