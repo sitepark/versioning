@@ -43,8 +43,7 @@
 		<gpg.skip>true</gpg.skip>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<file.encoding>UTF-8</file.encoding>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.release>11</maven.compiler.release>
 	</properties>
 
 	<scm>
