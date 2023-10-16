@@ -133,4 +133,10 @@ public class VersionsSpecification implements Serializable {
 		final VersionsSpecification that = (VersionsSpecification)other;
 		return this.elements.equals(that.elements);
 	}
+
+	@Override
+	@SuppressWarnings("checkstyle:nofinalizer")
+	protected final void finalize() {
+		// prevent finalizer attacks
+	}
 }

@@ -18,6 +18,13 @@
 		<Bug pattern="BC_UNCONFIRMED_CAST"/>
 	</Match>
 
+	<!-- false positive, finalize is declared final -->
+	<Match>
+		<Class name="com.sitepark.versioning.version.VersionFormatter"/>
+		<Method name="&lt;init&gt;" parameter="java.lang.String"/>
+		<Bug pattern="CT_CONSTRUCTOR_THROW"/>
+	</Match>
+
 	<!-- see https://github.com/spotbugs/spotbugs/issues/2627, remove when upgrading spotbugs above 4.8.0 -->
 	<Match>
 		<Bug pattern="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES"/>
