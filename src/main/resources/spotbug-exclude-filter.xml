@@ -17,4 +17,9 @@
 		<Method name="compareBoundaries" parameter="Boundary,Boundary"/>
 		<Bug pattern="BC_UNCONFIRMED_CAST"/>
 	</Match>
+
+	<!-- see https://github.com/spotbugs/spotbugs/issues/2627, remove when upgrading spotbugs above 4.8.0 -->
+	<Match>
+		<Bug pattern="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES"/>
+	</Match>
 </FindBugsFilter>
