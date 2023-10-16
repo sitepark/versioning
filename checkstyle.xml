@@ -11,7 +11,9 @@
 		<property name="checks" value=".*"/>
 	</module>
 
+	<module name="SuppressWarningsFilter"/>
 	<module name="TreeWalker">
+		<module name="SuppressWarningsHolder"/>
 		<module name="RegexpSinglelineJava">
 			<property name="format" value="^\t* "/>
 			<property name="message" value="Indent must use tab characters"/>

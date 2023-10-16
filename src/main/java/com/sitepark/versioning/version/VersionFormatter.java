@@ -146,6 +146,12 @@ public class VersionFormatter {
 		this.formatStrings = this.parseFormat(format);
 	}
 
+	@Override
+	@SuppressWarnings("checkstyle:nofinalizer")
+	protected final void finalize() {
+		// prevent finalizer attacks
+	}
+
 	/**
 	 * Parses the given {@code format} into a {@link List} of
 	 * {@link FormatElement}s.

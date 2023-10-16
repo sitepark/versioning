@@ -112,6 +112,12 @@ public class Branch implements Comparable<Branch>, Serializable {
 		return this.value.hashCode();
 	}
 
+	@Override
+	@SuppressWarnings("checkstyle:nofinalizer")
+	protected final void finalize() {
+		// prevent finalizer attacks
+	}
+
 	/**
 	 * Assures that the Serializable interface does not create a new instance
 	 * of {@code Branch.DEVELOP_VALUE}, which would mess up comparisons in
