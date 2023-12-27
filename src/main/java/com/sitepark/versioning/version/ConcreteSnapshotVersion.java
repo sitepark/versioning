@@ -45,12 +45,8 @@ public class ConcreteSnapshotVersion extends AbstractVersion
 
 	ConcreteSnapshotVersion(final VersionBuilder builder) {
 		super(builder);
-		this.timestamp = builder.getConcreteSnapshotTimestamp()
-			.orElseThrow(() -> new IllegalArgumentException(
-					"cannot build concrete snapshots without a buildnumber"));
-		this.buildnumber = builder.getConcreteSnapshotBuildnumber()
-			.orElseThrow(() -> new IllegalArgumentException(
-					"cannot build concrete snapshots without a timestamp"));
+		this.timestamp = builder.getConcreteSnapshotTimestamp().get();
+		this.buildnumber = builder.getConcreteSnapshotBuildnumber().get();
 	}
 
 	/**

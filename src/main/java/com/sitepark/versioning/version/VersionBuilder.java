@@ -295,6 +295,14 @@ public class VersionBuilder {
 	 */
 	public ConcreteSnapshotVersion buildConcreteSnapshot()
 			throws IllegalArgumentException {
+		if (this.concreteSnapshotTimestamp.isEmpty()) {
+			throw new IllegalArgumentException(
+					"cannot build concrete snapshots without a buildnumber");
+		}
+		if (this.concreteSnapshotBuildnumber.isEmpty()) {
+			throw new IllegalArgumentException(
+					"cannot build concrete snapshots without a timestamp");
+		}
 		return new ConcreteSnapshotVersion(this);
 	}
 }
