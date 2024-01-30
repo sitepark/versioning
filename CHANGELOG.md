@@ -1,3 +1,3 @@
 ## changelog
 
-See [gitlab releases](/../../releases/).
+See [github releases](/../../releases/).

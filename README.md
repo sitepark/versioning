@@ -323,7 +323,7 @@ You will need:
 
 Check this repository out
 ```sh
-git clone git@gitlab.sitepark.com:apis/versioning.git
+git clone git@github.com:sitepark/versioning.git
 cd versioning
 ```
 

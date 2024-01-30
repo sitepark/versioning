@@ -47,9 +47,9 @@
 	</properties>
 
 	<scm>
-		<connection>scm:git:git@gitlab.sitepark.com:apis/versioning.git</connection>
-		<developerConnection>scm:git:git@gitlab.sitepark.com:apis/versioning.git</developerConnection>
-		<url>https://gitlab.sitepark.com/apis/versioning</url>
+		<connection>scm:git:git@github.com:sitepark/versioning.git</connection>
+		<developerConnection>scm:git:git@github.com:sitepark/versioning.git</developerConnection>
+		<url>https://github.com/sitepark/versioning</url>
 		<tag>HEAD</tag>
 	</scm>
 
