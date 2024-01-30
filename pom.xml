@@ -9,6 +9,7 @@
 
 	<name>Sitepark Versioning</name>
 	<description>Provides reusable Version and VersionsSpecification classes and utilities</description>
+	<url>https://github.com/sitepark/versioning</url>
 
 	<licenses>
 		<license>
@@ -164,7 +165,6 @@
 				<executions>
 					<execution>
 						<id>attach-sources</id>
-						<phase>install</phase>
 						<goals>
 							<goal>jar-no-fork</goal>
 						</goals>
