@@ -16,7 +16,7 @@ Simply add this [maven](https://maven.apache.org/) dependency:
 	<dependency>
 		<groupId>com.sitepark</groupId>
 		<artifactId>versioning</artifactId>
-		<version>2.0.0-SNAPSHOT</version>
+		<version>2.0.0</version>
 	</dependency>
 ```
 
