@@ -7,14 +7,14 @@ package com.sitepark.versioning.version.specification.element;
  * @see SpecificationElement#getIntersection(SpecificationElement)
  */
 public final class ElementsIntersectException extends RuntimeException {
-	private static final long serialVersionUID = -3959646053406817174L;
+  private static final long serialVersionUID = -3959646053406817174L;
 
-	/**
-	 * Class Constructor specifying this {@link Exception}s detail message.
-	 * 
-	 * @param message the detail message
-	 */
-	public ElementsIntersectException(final String message) {
-		super(message);
-	}
+  /**
+   * Class Constructor specifying this {@link Exception}s detail message.
+   *
+   * @param message the detail message
+   */
+  public ElementsIntersectException(final String message) {
+    super(message);
+  }
 }

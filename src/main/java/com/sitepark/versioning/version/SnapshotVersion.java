@@ -35,42 +35,41 @@ package com.sitepark.versioning.version;
  * {@link ReleaseVersion}.
  */
 public class SnapshotVersion extends AbstractVersion implements BaseVersion {
-	private static final long serialVersionUID = 5634960545752086851L;
+  private static final long serialVersionUID = 5634960545752086851L;
 
-	SnapshotVersion(final VersionBuilder builder) {
-		super(builder);
-	}
+  SnapshotVersion(final VersionBuilder builder) {
+    super(builder);
+  }
 
-	SnapshotVersion(final Version other) {
-		super(other);
-	}
+  SnapshotVersion(final Version other) {
+    super(other);
+  }
 
-	/**
-	 * Returns wether this Version is considered a {@code snapshot}.
-	 * In the case of {@code SnapshotVersion}s this always returns {@code true}.
-	 *
-	 * @return {@code true}
-	 */
-	@Override
-	public boolean isSnapshot() {
-		return true;
-	}
+  /**
+   * Returns wether this Version is considered a {@code snapshot}.
+   * In the case of {@code SnapshotVersion}s this always returns {@code true}.
+   *
+   * @return {@code true}
+   */
+  @Override
+  public boolean isSnapshot() {
+    return true;
+  }
 
-	/**
-	 * Creates a new {@link ReleaseVersion} with the same {@link Version} fields
-	 * of this instance.
-	 * In other words this method creates a new Version without the
-	 * {@code "SNAPSHOT"} {@code qualifier}.
-	 *
-	 * @return a new {@code ReleaseVersion}
-	 */
-	public ReleaseVersion toRelease() {
-		return new ReleaseVersion(this);
-	}
+  /**
+   * Creates a new {@link ReleaseVersion} with the same {@link Version} fields
+   * of this instance.
+   * In other words this method creates a new Version without the
+   * {@code "SNAPSHOT"} {@code qualifier}.
+   *
+   * @return a new {@code ReleaseVersion}
+   */
+  public ReleaseVersion toRelease() {
+    return new ReleaseVersion(this);
+  }
 
-	@Override
-	public boolean equals(final Object other) {
-		return other instanceof SnapshotVersion
-			&& super.equals(other);
-	}
+  @Override
+  public boolean equals(final Object other) {
+    return other instanceof SnapshotVersion && super.equals(other);
+  }
 }

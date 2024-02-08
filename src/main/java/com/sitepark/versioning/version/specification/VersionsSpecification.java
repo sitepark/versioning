@@ -1,9 +1,5 @@
 package com.sitepark.versioning.version.specification;
 
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.Optional;
-
 import com.sitepark.versioning.Branch;
 import com.sitepark.versioning.version.Version;
 import com.sitepark.versioning.version.specification.element.ExplicitVersionElement;
@@ -12,6 +8,9 @@ import com.sitepark.versioning.version.specification.element.SpecificationElemen
 import com.sitepark.versioning.version.specification.element.UnmodifiableSortedElementBranchSet;
 import com.sitepark.versioning.version.specification.element.VersionRangeElement;
 import com.sitepark.versioning.version.specification.element.boundary.Boundaries;
+import java.io.Serializable;
+import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * A specification of a subset of {@link Version}s.
@@ -34,109 +33,105 @@ import com.sitepark.versioning.version.specification.element.boundary.Boundaries
  * @see VersionsSpecificationBuilder
  */
 public class VersionsSpecification implements Serializable {
-	private static final long serialVersionUID = 6549872561421500098L;
+  private static final long serialVersionUID = 6549872561421500098L;
 
-	private final UnmodifiableSortedElementBranchSet elements;
+  private final UnmodifiableSortedElementBranchSet elements;
 
-	VersionsSpecification(final VersionsSpecificationBuilder builder) {
-		this(builder.getElements().unmodifiableClone());
-	}
+  VersionsSpecification(final VersionsSpecificationBuilder builder) {
+    this(builder.getElements().unmodifiableClone());
+  }
 
-	private VersionsSpecification(
-			final UnmodifiableSortedElementBranchSet elements) {
-		if (elements.isEmpty()) {
-			throw new IllegalArgumentException(
-					"a VersionsSpecification has to have at least one Element");
-		}
-		this.elements = elements;
-	}
+  private VersionsSpecification(final UnmodifiableSortedElementBranchSet elements) {
+    if (elements.isEmpty()) {
+      throw new IllegalArgumentException(
+          "a VersionsSpecification has to have at least one Element");
+    }
+    this.elements = elements;
+  }
 
-	/**
-	 * Returns wether a {@link Version} is contained inside this instance.
-	 *
-	 * This is the case if any of this instances {@link SpecificationElement}s
-	 * consideres the {@code Version} to be either equal (in the case of
-	 * {@link ExplicitVersionElement}s) or inside it's {@link Boundaries} (in
-	 * the case of {@link VersionRangeElement}s).
-	 *
-	 * @param version the {@code Version} to check
-	 * @return {@code true} if the {@code Version} is compliant with this
-	 *         instance, {@code false} otherwise
-	 * @see SpecificationElement#containsVersion(Version)
-	 */
-	public boolean containsVersion(final Version version) {
-		return this.elements.containsVersion(version);
-	}
+  /**
+   * Returns wether a {@link Version} is contained inside this instance.
+   *
+   * This is the case if any of this instances {@link SpecificationElement}s
+   * consideres the {@code Version} to be either equal (in the case of
+   * {@link ExplicitVersionElement}s) or inside it's {@link Boundaries} (in
+   * the case of {@link VersionRangeElement}s).
+   *
+   * @param version the {@code Version} to check
+   * @return {@code true} if the {@code Version} is compliant with this
+   *         instance, {@code false} otherwise
+   * @see SpecificationElement#containsVersion(Version)
+   */
+  public boolean containsVersion(final Version version) {
+    return this.elements.containsVersion(version);
+  }
 
-	/**
-	 * Returns a {@link VersionsSpecification} of the intersection of this and
-	 * another instance such that {@code A ∩ B}.
-	 *
-	 * @param other another {@code VersionsSpecification} to calculate an
-	 *        intersection with
-	 * @return an {@link Optional} of a new {@code VersionsSpecification}
-	 *         depicting an intersection of this and the specified instance
-	 *         or an empty {@code Optional} if there is none
-	 * @see SpecificationElement#getIntersection(SpecificationElement)
-	 */
-	public Optional<VersionsSpecification> getIntersection(
-			final VersionsSpecification other) {
-		return Optional.of(this.elements.getIntersection(other.elements))
-			.filter(e -> !e.isEmpty())
-			.map(SortedElementBranchSet::unmodifiableClone)
-			.map(VersionsSpecification::new);
-	}
+  /**
+   * Returns a {@link VersionsSpecification} of the intersection of this and
+   * another instance such that {@code A ∩ B}.
+   *
+   * @param other another {@code VersionsSpecification} to calculate an
+   *        intersection with
+   * @return an {@link Optional} of a new {@code VersionsSpecification}
+   *         depicting an intersection of this and the specified instance
+   *         or an empty {@code Optional} if there is none
+   * @see SpecificationElement#getIntersection(SpecificationElement)
+   */
+  public Optional<VersionsSpecification> getIntersection(final VersionsSpecification other) {
+    return Optional.of(this.elements.getIntersection(other.elements))
+        .filter(e -> !e.isEmpty())
+        .map(SortedElementBranchSet::unmodifiableClone)
+        .map(VersionsSpecification::new);
+  }
 
-	/**
-	 * Returns a String representation of this instance.
-	 *
-	 * The resulting String is a verbose form of a String a
-	 * {@link VersionsSpecificationParser} would parse into an instance equal
-	 * to this one.
-	 *
-	 * <p>
-	 * The {@link SpecificationElement}s are sorted and grouped by their
-	 * {@link Branch}es.
-	 *
-	 * <p>
-	 * An example may look like this:
-	 * <code>[1.0.0,1.5.0),(1.5.0,),1.5.0-featureA,1.4.9-featureB</code>
-	 *
-	 * @return a descriptive String of this instance
-	 * @see VersionsSpecificationParser#parse(String)
-	 */
-	@Override
-	public String toString() {
-		final StringBuilder builder = new StringBuilder(64);
-		for (
-				final Iterator<SpecificationElement> iterator
-						= this.elements.iterator();
-				iterator.hasNext();) {
-			builder.append(iterator.next());
-			if (iterator.hasNext()) {
-				builder.append(',');
-			}
-		}
-		return builder.toString();
-	}
+  /**
+   * Returns a String representation of this instance.
+   *
+   * The resulting String is a verbose form of a String a
+   * {@link VersionsSpecificationParser} would parse into an instance equal
+   * to this one.
+   *
+   * <p>
+   * The {@link SpecificationElement}s are sorted and grouped by their
+   * {@link Branch}es.
+   *
+   * <p>
+   * An example may look like this:
+   * <code>[1.0.0,1.5.0),(1.5.0,),1.5.0-featureA,1.4.9-featureB</code>
+   *
+   * @return a descriptive String of this instance
+   * @see VersionsSpecificationParser#parse(String)
+   */
+  @Override
+  public String toString() {
+    final StringBuilder builder = new StringBuilder(64);
+    for (final Iterator<SpecificationElement> iterator = this.elements.iterator();
+        iterator.hasNext(); ) {
+      builder.append(iterator.next());
+      if (iterator.hasNext()) {
+        builder.append(',');
+      }
+    }
+    return builder.toString();
+  }
 
-	@Override
-	public int hashCode() {
-		return this.elements.hashCode();
-	}
+  @Override
+  public int hashCode() {
+    return this.elements.hashCode();
+  }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof VersionsSpecification)) {
-			return false;
-		}
-		final VersionsSpecification that = (VersionsSpecification)other;
-		return this.elements.equals(that.elements);
-	}
+  @Override
+  public boolean equals(final Object other) {
+    if (!(other instanceof VersionsSpecification)) {
+      return false;
+    }
+    final VersionsSpecification that = (VersionsSpecification) other;
+    return this.elements.equals(that.elements);
+  }
 
-	@Override
-	@SuppressWarnings("checkstyle:nofinalizer")
-	protected final void finalize() {
-		// prevent finalizer attacks
-	}
+  @Override
+  @SuppressWarnings("checkstyle:nofinalizer")
+  protected final void finalize() {
+    // prevent finalizer attacks
+  }
 }

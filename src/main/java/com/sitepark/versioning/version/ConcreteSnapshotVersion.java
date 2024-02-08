@@ -36,112 +36,111 @@ package com.sitepark.versioning.version;
  * caused by/interpreted as normal {@code qualifiers} of a
  * {@link ReleaseVersion}.
  */
-public class ConcreteSnapshotVersion extends AbstractVersion
-		implements ConcreteVersion {
-	private static final long serialVersionUID = -8343574484894405153L;
+public class ConcreteSnapshotVersion extends AbstractVersion implements ConcreteVersion {
+  private static final long serialVersionUID = -8343574484894405153L;
 
-	private final String timestamp;
-	private final int buildnumber;
+  private final String timestamp;
+  private final int buildnumber;
 
-	ConcreteSnapshotVersion(final VersionBuilder builder) {
-		super(builder);
-		this.timestamp = builder.getConcreteSnapshotTimestamp().get();
-		this.buildnumber = builder.getConcreteSnapshotBuildnumber().get();
-	}
+  ConcreteSnapshotVersion(final VersionBuilder builder) {
+    super(builder);
+    this.timestamp = builder.getConcreteSnapshotTimestamp().get();
+    this.buildnumber = builder.getConcreteSnapshotBuildnumber().get();
+  }
 
-	/**
-	 * Returns the {@code builddate} of this Version.
-	 * This is generally a String of the format <code>YYYYMMDD.HHMMSS</code>,
-	 * but could currently be any String.  This however is discouraged as the
-	 * type of this field may change to an actual date in a later version.
-	 *
-	 * @return the {@code builddate}
-	 */
-	public String getTimestamp() {
-		return this.timestamp;
-	}
+  /**
+   * Returns the {@code builddate} of this Version.
+   * This is generally a String of the format <code>YYYYMMDD.HHMMSS</code>,
+   * but could currently be any String.  This however is discouraged as the
+   * type of this field may change to an actual date in a later version.
+   *
+   * @return the {@code builddate}
+   */
+  public String getTimestamp() {
+    return this.timestamp;
+  }
 
-	/**
-	 * Returns the {@code buildnumber} of this Version.
-	 * May be zero ({@code 0}) but never negative.
-	 *
-	 * @return the {@code buildnumber}
-	 */
-	public int getBuildnumber() {
-		return this.buildnumber;
-	}
+  /**
+   * Returns the {@code buildnumber} of this Version.
+   * May be zero ({@code 0}) but never negative.
+   *
+   * @return the {@code buildnumber}
+   */
+  public int getBuildnumber() {
+    return this.buildnumber;
+  }
 
-	/**
-	 * Returns wether this Version is considered a {@code snapshot}.
-	 * In the case of {@code ConcreteSnapshotVersion}s this always returns
-	 * {@code true}.
-	 *
-	 * @return {@code true}
-	 */
-	@Override
-	public boolean isSnapshot() {
-		return true;
-	}
+  /**
+   * Returns wether this Version is considered a {@code snapshot}.
+   * In the case of {@code ConcreteSnapshotVersion}s this always returns
+   * {@code true}.
+   *
+   * @return {@code true}
+   */
+  @Override
+  public boolean isSnapshot() {
+    return true;
+  }
 
-	@Override
-	public int compareTo(final Version that) {
-		int result = super.compareTo(that);
-		if (result == 0 && that instanceof ConcreteSnapshotVersion) {
-			final ConcreteSnapshotVersion other = (ConcreteSnapshotVersion)that;
-			if ((result = this.timestamp.compareTo(other.timestamp)) != 0) {
-				return result;
-			}
-			return this.buildnumber - other.buildnumber;
-		}
-		return result;
-	}
+  @Override
+  public int compareTo(final Version that) {
+    int result = super.compareTo(that);
+    if (result == 0 && that instanceof ConcreteSnapshotVersion) {
+      final ConcreteSnapshotVersion other = (ConcreteSnapshotVersion) that;
+      if ((result = this.timestamp.compareTo(other.timestamp)) != 0) {
+        return result;
+      }
+      return this.buildnumber - other.buildnumber;
+    }
+    return result;
+  }
 
-	@Override
-	public BaseVersion asBaseVersion() {
-		return new SnapshotVersion(this);
-	}
+  @Override
+  public BaseVersion asBaseVersion() {
+    return new SnapshotVersion(this);
+  }
 
-	/**
-	 * Returns a {@link SnapshotVersion} that supersets this instance.
-	 *
-	 * @return a new {@code SnapshotVersion}
-	 * @see #asBaseVersion()
-	 */
-	public SnapshotVersion toSnapshot() {
-		return new SnapshotVersion(this);
-	}
+  /**
+   * Returns a {@link SnapshotVersion} that supersets this instance.
+   *
+   * @return a new {@code SnapshotVersion}
+   * @see #asBaseVersion()
+   */
+  public SnapshotVersion toSnapshot() {
+    return new SnapshotVersion(this);
+  }
 
-	/**
-	 * Creates a new {@link ReleaseVersion} with the same {@link Version} fields
-	 * of this instance.
-	 * In other words this method creates a new Version without the
-	 * {@code builddate} and {@code buildnumber} {@code qualifiers}.
-	 *
-	 * @return a new {@code ReleaseVersion}
-	 */
-	public ReleaseVersion toRelase() {
-		return new ReleaseVersion(this);
-	}
+  /**
+   * Creates a new {@link ReleaseVersion} with the same {@link Version} fields
+   * of this instance.
+   * In other words this method creates a new Version without the
+   * {@code builddate} and {@code buildnumber} {@code qualifiers}.
+   *
+   * @return a new {@code ReleaseVersion}
+   */
+  public ReleaseVersion toRelase() {
+    return new ReleaseVersion(this);
+  }
 
-	/**
-	 * Returns a String representation of this instance as formated by
-	 * {@link VersionFormatter#DEFAULT_CONCRETE_VERSION_FORMATTER}.
-	 *
-	 * @return a descriptive String of this instance
-	 */
-	@Override
-	public String toString() {
-		return VersionFormatter.DEFAULT_CONCRETE_VERSION_FORMATTER.format(this);
-	}
+  /**
+   * Returns a String representation of this instance as formated by
+   * {@link VersionFormatter#DEFAULT_CONCRETE_VERSION_FORMATTER}.
+   *
+   * @return a descriptive String of this instance
+   */
+  @Override
+  public String toString() {
+    return VersionFormatter.DEFAULT_CONCRETE_VERSION_FORMATTER.format(this);
+  }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ConcreteSnapshotVersion)) {
-			return false;
-		}
-		final ConcreteSnapshotVersion that = (ConcreteSnapshotVersion)other;
-		return super.equals(other)
-			&& this.timestamp.equals(that.timestamp)
-			&& this.buildnumber == that.buildnumber;
-	}
+  @Override
+  public boolean equals(final Object other) {
+    if (!(other instanceof ConcreteSnapshotVersion)) {
+      return false;
+    }
+    final ConcreteSnapshotVersion that = (ConcreteSnapshotVersion) other;
+    return super.equals(other)
+        && this.timestamp.equals(that.timestamp)
+        && this.buildnumber == that.buildnumber;
+  }
 }

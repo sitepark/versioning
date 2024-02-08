@@ -1,7 +1,5 @@
 package com.sitepark.versioning.version.specification;
 
-import java.text.ParseException;
-
 import com.sitepark.versioning.Branch;
 import com.sitepark.versioning.version.Version;
 import com.sitepark.versioning.version.VersionParser;
@@ -17,6 +15,7 @@ import com.sitepark.versioning.version.specification.element.boundary.InclusiveU
 import com.sitepark.versioning.version.specification.element.boundary.InvalidBoundariesException;
 import com.sitepark.versioning.version.specification.element.boundary.UnlimitedLowerBoundary;
 import com.sitepark.versioning.version.specification.element.boundary.UnlimitedUpperBoundary;
+import java.text.ParseException;
 
 /**
  * A class to parse Strings of a certain format into
@@ -148,68 +147,67 @@ import com.sitepark.versioning.version.specification.element.boundary.UnlimitedU
  */
 public class VersionsSpecificationParser {
 
-	/**
-	 * A default instance
-	 */
-	public static final VersionsSpecificationParser DEFAULT_PARSER
-			= new VersionsSpecificationParser();
+  /**
+   * A default instance
+   */
+  public static final VersionsSpecificationParser DEFAULT_PARSER =
+      new VersionsSpecificationParser();
 
-	/**
-	 * Class Constructor
-	 */
-	public VersionsSpecificationParser() {
-	}
+  /**
+   * Class Constructor
+   */
+  public VersionsSpecificationParser() {}
 
-	/**
-	 * Parses a String into a {@link VersionsSpecification}.
-	 *
-	 * The required format is as follows: {@code "<element>[, <element>]..."}.
-	 * Each {@link SpecificationElement} should be either a
-	 * {@link ExplicitVersionElement} or a {@link VersionRangeElement}.
-	 * {@code ExplicitVersionElement}s consist of a {@link Version}, where as
-	 * {@code VersionRangeElement}s follow their own format:
-	 * {@code "<lower-boundary>,<upper-boundary>"}.
-	 * <ul>
-	 *   <li>
-	 *     {@link ExclusiveLowerBoundary}: {@code "(<version>"}
-	 *   </li>
-	 *   <li>
-	 *     {@link InclusiveLowerBoundary}: {@code "[<version>"}
-	 *   </li>
-	 *   <li>
-	 *     {@link UnlimitedLowerBoundary}: {@code "("}
-	 *   </li>
-	 *   <li>
-	 *     {@link ExclusiveUpperBoundary}: {@code "<version>)"}
-	 *   </li>
-	 *   <li>
-	 *     {@link InclusiveUpperBoundary}: {@code "<version>]"}
-	 *   </li>
-	 *   <li>
-	 *     {@link UnlimitedUpperBoundary}: {@code ")"}
-	 *   </li>
-	 * </ul>
-	 *
-	 * <p>
-	 * Each {@code Version} in a {@code VersionsSpecification}-String may be
-	 * written in any way the {@link VersionParser} understands.  Spaces are
-	 * ignored (except inside of {@code Version}s).
-	 * {@code SpecificationElement}s may not "overlap" and a
-	 * {@code VersionRangeElement}s {@code Boundary}s cannot both be
-	 * <em>"unlimitted"</em>.
-	 *
-	 * @param string the String to parse
-	 * @return the parsed {@code VersionsSpecification}
-	 * @throws ParseException if the String is invalidly formatted
-	 * @throws InvalidBoundariesException if the {@link Boundaries} of a
-	 *                                    {@link VersionRangeElement} are both
-	 *                                    "unlimited" or if a {@code Version}
-	 *                                    of a lower {@code Boundary} is
-	 *                                    greater than a upper
-	 *                                    {@code Boundary}'s {@code Version}
-	 */
-	public VersionsSpecification parse(final String string)
-			throws ParseException, InvalidBoundariesException {
-		return new VersionsSpecificationParseExecutor(string).execute();
-	}
+  /**
+   * Parses a String into a {@link VersionsSpecification}.
+   *
+   * The required format is as follows: {@code "<element>[, <element>]..."}.
+   * Each {@link SpecificationElement} should be either a
+   * {@link ExplicitVersionElement} or a {@link VersionRangeElement}.
+   * {@code ExplicitVersionElement}s consist of a {@link Version}, where as
+   * {@code VersionRangeElement}s follow their own format:
+   * {@code "<lower-boundary>,<upper-boundary>"}.
+   * <ul>
+   *   <li>
+   *     {@link ExclusiveLowerBoundary}: {@code "(<version>"}
+   *   </li>
+   *   <li>
+   *     {@link InclusiveLowerBoundary}: {@code "[<version>"}
+   *   </li>
+   *   <li>
+   *     {@link UnlimitedLowerBoundary}: {@code "("}
+   *   </li>
+   *   <li>
+   *     {@link ExclusiveUpperBoundary}: {@code "<version>)"}
+   *   </li>
+   *   <li>
+   *     {@link InclusiveUpperBoundary}: {@code "<version>]"}
+   *   </li>
+   *   <li>
+   *     {@link UnlimitedUpperBoundary}: {@code ")"}
+   *   </li>
+   * </ul>
+   *
+   * <p>
+   * Each {@code Version} in a {@code VersionsSpecification}-String may be
+   * written in any way the {@link VersionParser} understands.  Spaces are
+   * ignored (except inside of {@code Version}s).
+   * {@code SpecificationElement}s may not "overlap" and a
+   * {@code VersionRangeElement}s {@code Boundary}s cannot both be
+   * <em>"unlimitted"</em>.
+   *
+   * @param string the String to parse
+   * @return the parsed {@code VersionsSpecification}
+   * @throws ParseException if the String is invalidly formatted
+   * @throws InvalidBoundariesException if the {@link Boundaries} of a
+   *                                    {@link VersionRangeElement} are both
+   *                                    "unlimited" or if a {@code Version}
+   *                                    of a lower {@code Boundary} is
+   *                                    greater than a upper
+   *                                    {@code Boundary}'s {@code Version}
+   */
+  public VersionsSpecification parse(final String string)
+      throws ParseException, InvalidBoundariesException {
+    return new VersionsSpecificationParseExecutor(string).execute();
+  }
 }
