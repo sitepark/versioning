@@ -14,5 +14,4 @@ package com.sitepark.versioning.version;
  * {@link ReleaseVersion}s (like <code>1.0.3</code>) are always both,
  * {@link BaseVersion} and {@link ConcreteVersion}.
  */
-public interface BaseVersion extends Version {
-}
+public interface BaseVersion extends Version {}

@@ -20,10 +20,10 @@ package com.sitepark.versioning.version;
  */
 public interface ConcreteVersion extends Version {
 
-	/**
-	 * Returns a {@link BaseVersion} representing this instance.
-	 *
-	 * @return this instance as a {@code BaseVersion}
-	 */
-	public BaseVersion asBaseVersion();
+  /**
+   * Returns a {@link BaseVersion} representing this instance.
+   *
+   * @return this instance as a {@code BaseVersion}
+   */
+  public BaseVersion asBaseVersion();
 }
