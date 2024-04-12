@@ -2,13 +2,13 @@ name: (📡) Deploy Snapshot
 
 on:
   push:
-    branches:
+    branches:    
     - main
   workflow_dispatch:
 
 jobs:
   deploy:
-    uses: sitepark/github-project-workflow/.github/workflows/maven-deploy-snapshot.yml@main
+    uses: sitepark/github-project-workflow/.github/workflows/maven-deploy-snapshot.yml@release/1.x
     secrets:
       MVN_REPO_SERVER_USERNAME: ${{ secrets.MVN_REPO_SERVER_USERNAME }}
       MVN_REPO_SERVER_PASSWORD: ${{ secrets.MVN_REPO_SERVER_PASSWORD }}

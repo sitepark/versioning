@@ -45,17 +45,6 @@
 		<url>https://github.com/sitepark/versioning</url>
 	</scm>
 
-	<distributionManagement>
-		<repository>
-			<id>release</id>
-			<url>https://develop.sitepark.com/nexus/content/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>snapshot</id>
-			<url>https://develop.sitepark.com/nexus/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 	<properties>
 		<junit.version>5.10.2</junit.version>
 		<pmd.version>6.55.0</pmd.version>
@@ -389,4 +378,24 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>nexus-staging-release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.13</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
