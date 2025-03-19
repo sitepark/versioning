@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A builder class to instantiate {@link ReleaseVersion}s,
@@ -37,9 +38,9 @@ import java.util.Optional;
  *    .buildConcreteSnapshot();</pre>
  */
 public class VersionBuilder {
-  private int major;
-  private int minor;
-  private int incremental;
+  private AtomicInteger major;
+  private AtomicInteger minor;
+  private AtomicInteger incremental;
   private Branch branch;
   private final List<String> qualifiers;
 
@@ -51,9 +52,9 @@ public class VersionBuilder {
    * Class Constructor
    */
   public VersionBuilder() {
-    this.major = 0;
-    this.minor = 0;
-    this.incremental = 0;
+    this.major = new AtomicInteger(0);
+    this.minor = new AtomicInteger(0);
+    this.incremental = new AtomicInteger(0);
     this.branch = Branch.DEVELOP;
     this.qualifiers = Collections.synchronizedList(new LinkedList<>());
     this.concreteSnapshotTimestamp = Optional.empty();
@@ -70,7 +71,7 @@ public class VersionBuilder {
    * @see Version#getMajor()
    */
   public VersionBuilder setMajor(final int major) {
-    this.major = major;
+    this.major.set(major);
     return this;
   }
 
@@ -82,7 +83,7 @@ public class VersionBuilder {
    * @see Version#getMajor()
    */
   public int getMajor() {
-    return this.major;
+    return this.major.get();
   }
 
   /**
@@ -95,7 +96,7 @@ public class VersionBuilder {
    * @see Version#getMinor()
    */
   public VersionBuilder setMinor(final int minor) {
-    this.minor = minor;
+    this.minor.set(minor);
     return this;
   }
 
@@ -107,7 +108,7 @@ public class VersionBuilder {
    * @see Version#getMinor()
    */
   public int getMinor() {
-    return this.minor;
+    return this.minor.get();
   }
 
   /**
@@ -120,7 +121,7 @@ public class VersionBuilder {
    * @see Version#getIncremental()
    */
   public VersionBuilder setIncremental(final int incremental) {
-    this.incremental = incremental;
+    this.incremental.set(incremental);
     return this;
   }
 
@@ -132,7 +133,7 @@ public class VersionBuilder {
    * @see Version#getIncremental()
    */
   public int getIncremental() {
-    return this.incremental;
+    return this.incremental.get();
   }
 
   /**
