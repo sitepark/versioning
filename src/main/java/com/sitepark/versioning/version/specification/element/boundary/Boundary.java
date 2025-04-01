@@ -40,6 +40,7 @@ public abstract class Boundary implements Comparable<Boundary>, Serializable {
   /**
    * Lower {@link Boundary}s of {@link Boundaries} instances.
    */
+  @SuppressWarnings("PMD.ImplicitFunctionalInterface")
   public interface Lower {
 
     /**
@@ -74,6 +75,7 @@ public abstract class Boundary implements Comparable<Boundary>, Serializable {
   /**
    * Upper {@link Boundary}s of {@link Boundaries} instances.
    */
+  @SuppressWarnings("PMD.ImplicitFunctionalInterface")
   public interface Upper {
 
     /**
