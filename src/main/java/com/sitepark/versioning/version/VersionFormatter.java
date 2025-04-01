@@ -244,10 +244,6 @@ public final class VersionFormatter {
   }
 
   /**
-   * Ein Schlüsselwort-Element eines Formats - bestehend aus einem
-   * optionalen Prefix und einem {@link VersionFormatter.Keyword Keyword}.
-   */
-  /**
    * An {@link FormatElement} of a {@link VersionFormatter}s format,
    * representing a String literal.
    */

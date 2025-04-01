@@ -3,12 +3,11 @@ package com.sitepark.versioning.version;
 import java.text.ParseException;
 
 /**
- * Implements the {@link ConcreteVersion}-parsing process.
- * Results are either {@link ConcreteSnapshotVersion}s or
- * {@link ReleaseVersion}s, depending on wether the last two {@code qualifiers}
- * are a {@code timestamp} of the format {@code yyyyMMdd.HHmmss} and a
- * {@code buildnumber}.  To be able to handle these two cases more elegantly
- * they are wrapped in a {@link PotentialConcreteSnapshotVersion} instance.
+ * Implements the {@link BaseVersion}-parsing process.
+ * Results are either {@link SnapshotVersion}s or {@link ReleaseVersion}s,
+ * depending on wether the last {@code qualifier} is exactly {@code "SNAPSHOT"}.
+ * To be able to handle these two cases more elegantly they are wrapped in a
+ * {@link PotentialConcreteSnapshotVersion} instance.
  *
  * <strong>Attention:</strong> this class is meant for a single execution and
  * therefore not thread safe!
@@ -21,12 +20,6 @@ class PotentialSnapshotParseExecutor extends VersionParseExecutor<PotentialSnaps
     super(string, flags);
   }
 
-  /**
-   * Erstellt ein {@link PotentialSnapshotVersion} Objekt mit
-   * einer {@link SnapshotVersion}, wenn ein
-   * <em>"SNAPSHOT"</em> Qualifier beim Parsen gefunden wurde
-   * oder einer {@link ReleaseVersion}, wenn nicht.
-   */
   @Override
   protected PotentialSnapshotVersion buildVersion() {
     return this.hasSnapshotQualifier

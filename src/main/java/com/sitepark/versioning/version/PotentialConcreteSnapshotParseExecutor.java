@@ -4,10 +4,12 @@ import com.sitepark.versioning.Branch;
 import java.text.ParseException;
 
 /**
- * Implements the {@link BaseVersion}-parsing process.
- * Results are either {@link SnapshotVersion}s or {@link ReleaseVersion}s,
- * depending on wether the last {@code qualifier} is {@code "SNAPSHOT"}.  To be
- * able to handle these two cases more elegantly they are wrapped in a
+ * Implements the {@link ConcreteVersion}-parsing process.
+ * Results are either {@link ConcreteSnapshotVersion}s or
+ * {@link ReleaseVersion}s, depending on wether the last two {@code qualifiers}
+ * are a {@code timestamp} of the format {@code yyyyMMdd.HHmmss} and a
+ * {@code buildnumber}.
+ * To be able to handle these two cases more elegantly they are wrapped in a
  * {@link PotentialSnapshotVersion} instance.
  *
  * <strong>Attention:</strong> this class is meant for a single execution and
@@ -17,19 +19,17 @@ class PotentialConcreteSnapshotParseExecutor
     extends VersionParseExecutor<PotentialConcreteSnapshotVersion> {
 
   /**
-   * Hier wird ein möglicher Timestamp-Qualifier zwischen gespeichert.
-   * Wird anschließend ein Builddate-Qualifier gefunden und dannach keiner
-   * mehr, handelt es sich um den Bauzeitpunkt der konkreten Snapshot-Version.
-   * Passt der nachfolgende String nicht zu diesem Schema, wird der Wert
-   * dieser Variable nachträglich wie ein normaler Qualifier behandelt.
+   * A field to store a potential timestamp-qualifier.
+   * When we encounter what looks like a timestamp-qualifier we have to look out
+   * for a following builddate-qualifier (which also has to be the last) before
+   * labeling the version a {@link ConcreteSnapshotVersion}.
    */
   private String timestampQualifier = null;
 
   /**
-   * Bezeichnet, ob der Wert von <code>this.timestampQualifier</code>
-   * - in dem Fall, dass dieser nicht Teil des Timestamp-Builddate-Qualifiers
-   * von konkreten Snapshot-Versionen ist - eigentlich als Branch oder als
-   * normaler Qualifier interpretiert geworden wäre.
+   * Wether or not a potential timestamp-qualifier (stored in
+   * {@link #timestampQualifier} should be interpreted as the versions branch if
+   * found not to be part of a {@link ConcreteSnapshotVersion}.
    */
   private boolean timestampQualifierWasBranch = true;
 
@@ -37,12 +37,6 @@ class PotentialConcreteSnapshotParseExecutor
     super(string, flags);
   }
 
-  /**
-   * Erstellt ein {@link PotentialConcreteSnapshotVersion} Objekt mit
-   * einer {@link ConcreteSnapshotVersion}, wenn ein
-   * Timestamp- und ein Builddate Qualifier beim Parsen gefunden wurden
-   * oder einer {@link ReleaseVersion}, wenn nicht.
-   */
   @Override
   protected PotentialConcreteSnapshotVersion buildVersion() {
     return this.versionBuilder.getConcreteSnapshotTimestamp().isPresent()
