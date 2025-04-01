@@ -59,7 +59,7 @@ import java.util.function.Function;
  * <p>
  * This class is immutable and thread-safe.
  */
-public class VersionFormatter {
+public final class VersionFormatter {
 
   private static final String DEFAULT_FORMAT =
       ":MAJOR::.MINOR::.INCREMENTAL::-FEATURE::-QUALIFIERS:";
@@ -141,12 +141,6 @@ public class VersionFormatter {
       throws IllegalFormatFlagsException, MissingColonFormatException {
     Objects.requireNonNull(format);
     this.formatStrings = this.parseFormat(format);
-  }
-
-  @Override
-  @SuppressWarnings("checkstyle:nofinalizer")
-  protected final void finalize() {
-    // prevent finalizer attacks
   }
 
   /**

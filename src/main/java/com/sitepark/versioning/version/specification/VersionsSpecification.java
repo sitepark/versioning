@@ -32,7 +32,7 @@ import java.util.Optional;
  * @see VersionsSpecificationParser
  * @see VersionsSpecificationBuilder
  */
-public class VersionsSpecification implements Serializable {
+public final class VersionsSpecification implements Serializable {
   private static final long serialVersionUID = 6549872561421500098L;
 
   private final UnmodifiableSortedElementBranchSet elements;
@@ -127,11 +127,5 @@ public class VersionsSpecification implements Serializable {
     }
     final VersionsSpecification that = (VersionsSpecification) other;
     return this.elements.equals(that.elements);
-  }
-
-  @Override
-  @SuppressWarnings("checkstyle:nofinalizer")
-  protected final void finalize() {
-    // prevent finalizer attacks
   }
 }

@@ -19,7 +19,7 @@ import java.io.Serializable;
  *   <li>{@code non-feature-branch == non-feature-branch}</li>
  * </ul>
  */
-public class Branch implements Comparable<Branch>, Serializable {
+public final class Branch implements Comparable<Branch>, Serializable {
   private static final long serialVersionUID = 7052868613896268596L;
 
   private static final String DEVELOP_VALUE = "develop";
@@ -107,12 +107,6 @@ public class Branch implements Comparable<Branch>, Serializable {
   @Override
   public int hashCode() {
     return this.value.hashCode();
-  }
-
-  @Override
-  @SuppressWarnings("checkstyle:nofinalizer")
-  protected final void finalize() {
-    // prevent finalizer attacks
   }
 
   /**
