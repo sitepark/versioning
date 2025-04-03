@@ -82,17 +82,29 @@ public class ConcreteSnapshotVersion extends AbstractVersion implements Concrete
     return true;
   }
 
+  /**
+   * Returns wether this Version is considered a {@code release}.
+   * In the case of {@code ConcreteSnapshotVersion}s this always returns
+   * {@code false}.
+   *
+   * @return {@code false}
+   */
   @Override
-  public int compareTo(final Version that) {
-    int result = super.compareTo(that);
-    if (result == 0 && that instanceof ConcreteSnapshotVersion) {
-      final ConcreteSnapshotVersion other = (ConcreteSnapshotVersion) that;
-      if ((result = this.timestamp.compareTo(other.timestamp)) != 0) {
-        return result;
+  public boolean isRelease() {
+    return false;
+  }
+
+  @Override
+  public int compareTo(final Version other) {
+    int cmp = super.compareTo(other);
+    if (cmp == 0 && other instanceof ConcreteSnapshotVersion) {
+      final ConcreteSnapshotVersion that = (ConcreteSnapshotVersion) other;
+      if ((cmp = this.timestamp.compareTo(that.timestamp)) != 0) {
+        return cmp;
       }
-      return this.buildnumber - other.buildnumber;
+      return this.buildnumber - that.buildnumber;
     }
-    return result;
+    return cmp;
   }
 
   @Override

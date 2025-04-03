@@ -57,6 +57,17 @@ public class SnapshotVersion extends AbstractVersion implements BaseVersion {
   }
 
   /**
+   * Returns wether this Version is considered a {@code release}.
+   * In the case of {@code SnapshotVersion}s this always returns {@code false}.
+   *
+   * @return {@code false}
+   */
+  @Override
+  public boolean isRelease() {
+    return false;
+  }
+
+  /**
    * Creates a new {@link ReleaseVersion} with the same {@link Version} fields
    * of this instance.
    * In other words this method creates a new Version without the

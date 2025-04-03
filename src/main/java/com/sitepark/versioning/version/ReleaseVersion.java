@@ -28,6 +28,17 @@ public class ReleaseVersion extends AbstractVersion implements BaseVersion, Conc
   }
 
   /**
+   * Returns wether this Version is considered a {@code release}.
+   * In the case of {@code ReleaseVersion}s this always returns {@code true}.
+   *
+   * @return {@code true}
+   */
+  @Override
+  public boolean isRelease() {
+    return true;
+  }
+
+  /**
    * Returns a {@link BaseVersion} that supersets this
    * {@link ConcreteVersion}.
    * In the case of {@code ReleaseVersion}s this always returns itself.

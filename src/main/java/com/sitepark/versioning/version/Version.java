@@ -71,12 +71,29 @@ public interface Version extends Comparable<Version> {
    * <p>
    * A Version is strictly classifiable into either a {@code snapshot} or a
    * {@code release}.  Meaning that a instance that returns {@code false} is
-   * always a {@code release}; There is no {@code Version#isRelease()} method.
+   * always a {@code release}.
    *
    * @return {@code true} if this Version is considered a {@code snapshot},
    *         {@code false} otherwise
+   * @see #isRelease()
    */
   public abstract boolean isSnapshot();
+
+  /**
+   * Returns wether this Version is considered a {@code release}.
+   * Depending on the implementing class this may be determined by varying
+   * factors.
+   *
+   * <p>
+   * A Version is strictly classifiable into either a {@code snapshot} or a
+   * {@code release}.  Meaning that a instance that returns {@code false} is
+   * always a {@code snapshot}.
+   *
+   * @return {@code true} if this Version is considered a {@code release},
+   *         {@code false} otherwise
+   * @see #isSnapshot()
+   */
+  public abstract boolean isRelease();
 
   /**
    * Compares this Version to another Version.
