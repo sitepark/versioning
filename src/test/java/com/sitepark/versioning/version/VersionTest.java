@@ -12,7 +12,8 @@ public class VersionTest {
   public void testIsSnapshot() throws ParseException {
     final Version release = VersionTest.PARSER.parseRelease("1.2");
     final Version snapshot = VersionTest.PARSER.parsePotentialSnapshot("2.3-SNAPSHOT").get();
-    final Version concreteSnapshot = VersionTest.PARSER.parsePotentialConcreteSnapshot("2.3-87654321.123456-7").get();
+    final Version concreteSnapshot =
+        VersionTest.PARSER.parsePotentialConcreteSnapshot("2.3-87654321.123456-7").get();
     Assertions.assertFalse(release.isSnapshot());
     Assertions.assertTrue(snapshot.isSnapshot());
     Assertions.assertTrue(concreteSnapshot.isSnapshot());
@@ -22,7 +23,8 @@ public class VersionTest {
   public void testIsRelease() throws ParseException {
     final Version release = VersionTest.PARSER.parseRelease("1.2");
     final Version snapshot = VersionTest.PARSER.parsePotentialSnapshot("2.3-SNAPSHOT").get();
-    final Version concreteSnapshot = VersionTest.PARSER.parsePotentialConcreteSnapshot("2.3-87654321.123456-7").get();
+    final Version concreteSnapshot =
+        VersionTest.PARSER.parsePotentialConcreteSnapshot("2.3-87654321.123456-7").get();
     Assertions.assertTrue(release.isRelease());
     Assertions.assertFalse(snapshot.isRelease());
     Assertions.assertFalse(concreteSnapshot.isRelease());
