@@ -55,6 +55,7 @@ classDiagram
 		int getIncremental()
 		Branch getBranch()
 		List&lt;String&gt; getQualifierList()
+		boolean isRelease()
 		boolean isSnapshot()
 	}
 	class BaseVersion {
