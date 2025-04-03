@@ -79,6 +79,11 @@ public class DatedBaseVersion implements BaseVersion, Serializable {
   }
 
   @Override
+  public boolean isRelease() {
+    return this.version.isRelease();
+  }
+
+  @Override
   public boolean isSnapshot() {
     return this.version.isSnapshot();
   }
