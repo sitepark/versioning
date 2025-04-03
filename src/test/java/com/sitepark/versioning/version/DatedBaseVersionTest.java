@@ -20,6 +20,26 @@ public class DatedBaseVersionTest {
       new VersionBuilder().setMajor(2).setMinor(4).setIncremental(3).buildSnapshot();
 
   @Test
+  public void testIsSnapshot() {
+    final DatedBaseVersion snapshot =
+        new DatedBaseVersion(DatedBaseVersionTest.VERSION, DatedBaseVersionTest.DATE);
+    final DatedBaseVersion release =
+        new DatedBaseVersion(DatedBaseVersionTest.VERSION.toRelease(), DatedBaseVersionTest.DATE);
+    Assertions.assertFalse(release.isSnapshot());
+    Assertions.assertTrue(snapshot.isSnapshot());
+  }
+
+  @Test
+  public void testIsRelease() throws ParseException {
+    final DatedBaseVersion snapshot =
+        new DatedBaseVersion(DatedBaseVersionTest.VERSION, DatedBaseVersionTest.DATE);
+    final DatedBaseVersion release =
+        new DatedBaseVersion(DatedBaseVersionTest.VERSION.toRelease(), DatedBaseVersionTest.DATE);
+    Assertions.assertTrue(release.isRelease());
+    Assertions.assertFalse(snapshot.isRelease());
+  }
+
+  @Test
   public void testCompareToEquals() {
     final DatedBaseVersion version =
         new DatedBaseVersion(DatedBaseVersionTest.VERSION, DatedBaseVersionTest.DATE);

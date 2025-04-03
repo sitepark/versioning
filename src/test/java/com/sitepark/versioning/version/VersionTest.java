@@ -9,6 +9,26 @@ public class VersionTest {
   private static final VersionParser PARSER = new VersionParser();
 
   @Test
+  public void testIsSnapshot() throws ParseException {
+    final Version release = VersionTest.PARSER.parseRelease("1.2");
+    final Version snapshot = VersionTest.PARSER.parsePotentialSnapshot("2.3-SNAPSHOT").get();
+    final Version concreteSnapshot = VersionTest.PARSER.parsePotentialConcreteSnapshot("2.3-87654321.123456-7").get();
+    Assertions.assertFalse(release.isSnapshot());
+    Assertions.assertTrue(snapshot.isSnapshot());
+    Assertions.assertTrue(concreteSnapshot.isSnapshot());
+  }
+
+  @Test
+  public void testIsRelease() throws ParseException {
+    final Version release = VersionTest.PARSER.parseRelease("1.2");
+    final Version snapshot = VersionTest.PARSER.parsePotentialSnapshot("2.3-SNAPSHOT").get();
+    final Version concreteSnapshot = VersionTest.PARSER.parsePotentialConcreteSnapshot("2.3-87654321.123456-7").get();
+    Assertions.assertTrue(release.isRelease());
+    Assertions.assertFalse(snapshot.isRelease());
+    Assertions.assertFalse(concreteSnapshot.isRelease());
+  }
+
+  @Test
   public void testMajorCompareTo() throws ParseException {
     final Version smaller = VersionTest.PARSER.parseRelease("1");
     final Version bigger = VersionTest.PARSER.parseRelease("3");
