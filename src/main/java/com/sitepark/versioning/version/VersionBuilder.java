@@ -152,10 +152,10 @@ public class VersionBuilder {
 
   /**
    * Returns the currently set {@link Branch}.
-   * Defaults to zero ({@code 0}).
+   * Defaults to {@link Branch#DEVELOP}.
    *
    * @return the incremental version
-   * @see Version#getIncremental()
+   * @see Version#getBranch()
    */
   public Branch getBranch() {
     return this.branch;
@@ -262,6 +262,8 @@ public class VersionBuilder {
    * applied.
    *
    * @return a new ReleaseVersion
+   * @see #buildSnapshot()
+   * @see #buildConcreteSnapshot()
    */
   public ReleaseVersion buildRelease() {
     final ReleaseVersion value = new ReleaseVersion(this);
@@ -274,6 +276,8 @@ public class VersionBuilder {
    * applied.
    *
    * @return a new SnapshotVersion
+   * @see #buildRelease()
+   * @see #buildConcreteSnapshot()
    */
   public SnapshotVersion buildSnapshot() {
     final SnapshotVersion value = new SnapshotVersion(this);
@@ -291,6 +295,8 @@ public class VersionBuilder {
    *                                  {@code buildnumber} are not set
    * @see #setConcreteSnapshotTimestamp(String)
    * @see #setConcreteSnapshotBuildnumber(int)
+   * @see #buildRelease()
+   * @see #buildSnapshot()
    */
   public ConcreteSnapshotVersion buildConcreteSnapshot() throws IllegalArgumentException {
     if (this.concreteSnapshotTimestamp.isEmpty()) {
