@@ -30,7 +30,7 @@ public class DatedBaseVersionTest {
   }
 
   @Test
-  public void testIsRelease() throws ParseException {
+  public void testIsRelease() {
     final DatedBaseVersion snapshot =
         new DatedBaseVersion(DatedBaseVersionTest.VERSION, DatedBaseVersionTest.DATE);
     final DatedBaseVersion release =
