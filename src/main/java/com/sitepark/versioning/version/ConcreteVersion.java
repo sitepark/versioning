@@ -18,7 +18,8 @@ package com.sitepark.versioning.version;
  * {@link ReleaseVersion}s (like <code>1.0.3</code>) are always both,
  * {@link BaseVersion} and {@link ConcreteVersion}.
  */
-public interface ConcreteVersion extends Version {
+public sealed interface ConcreteVersion extends Version
+    permits ReleaseVersion, ConcreteSnapshotVersion {
 
   /**
    * Returns a {@link BaseVersion} representing this instance.

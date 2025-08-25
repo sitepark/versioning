@@ -2,9 +2,10 @@ package com.sitepark.versioning.version.specification.element.boundary;
 
 import com.sitepark.versioning.version.BaseVersion;
 import com.sitepark.versioning.version.Version;
+import com.sitepark.versioning.version.specification.element.VersionRangeElement;
 
 /**
- * A {@link Boundary.Upper} for {@link Boundaries} instances.
+ * A {@link Boundary.Upper} for {@link VersionRangeElement}s.
  *
  * This {@link Boundary} includes all {@link Version}s, that are greater than
  * the {@link BaseVersion} of this instance.
@@ -27,14 +28,20 @@ public final class ExclusiveUpperBoundary extends Boundary.WithVersion implement
   }
 
   @Override
-  public int compareTo(final Version version) {
-    final int cmp = this.version.compareTo(version);
-    return cmp != 0 ? cmp : -1;
+  public int compareTo(final Boundary boundary) {
+    return switch (boundary) {
+      case UnlimitedUpperBoundary o -> -1;
+      case ExclusiveUpperBoundary o -> this.version.compareTo(o.getVersion());
+      case InclusiveUpperBoundary o -> this.compareToOr(o.getVersion(), -1);
+      case UnlimitedLowerBoundary o -> 1;
+      case ExclusiveLowerBoundary o -> this.compareToOr(o.getVersion(), -1);
+      case InclusiveLowerBoundary o -> this.compareToOr(o.getVersion(), -1);
+    };
   }
 
   @Override
-  public boolean includesVersion(final Version version) {
-    return Boundary.Upper.super.includesVersion(version);
+  public int compareTo(final Version version) {
+    return this.compareToOr(version, -1);
   }
 
   @Override
@@ -49,9 +56,6 @@ public final class ExclusiveUpperBoundary extends Boundary.WithVersion implement
 
   @Override
   public boolean equals(final Object other) {
-    if (!(other instanceof ExclusiveUpperBoundary)) {
-      return false;
-    }
-    return this.version.equals(((ExclusiveUpperBoundary) other).version);
+    return other instanceof final ExclusiveUpperBoundary that && this.version.equals(that.version);
   }
 }

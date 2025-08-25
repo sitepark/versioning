@@ -1,21 +1,34 @@
 package com.sitepark.versioning.version.specification.element.boundary;
 
 import com.sitepark.versioning.version.Version;
+import com.sitepark.versioning.version.specification.element.VersionRangeElement;
 
 /**
- * A {@link Boundary.Lower} for {@link Boundaries} instances.
+ * A {@link Boundary.Lower} for {@link VersionRangeElement}s.
  *
  * This {@link Boundary} does not exclude any {@link Version}s.
  * More formally, this {@code Boundary} {@code B} contains all {@code Version}s
  * {@code v} such that {@code B = {v | v}}.
  */
-public final class UnlimitedLowerBoundary extends Boundary implements Boundary.Lower {
+public final class UnlimitedLowerBoundary implements Boundary.Lower {
   private static final long serialVersionUID = -9159986392093270475L;
 
   /**
    * Class Constructor.
    */
   public UnlimitedLowerBoundary() {}
+
+  @Override
+  public int compareTo(final Boundary boundary) {
+    return switch (boundary) {
+      case UnlimitedUpperBoundary o -> -1;
+      case ExclusiveUpperBoundary o -> -1;
+      case InclusiveUpperBoundary o -> -1;
+      case UnlimitedLowerBoundary o -> 0;
+      case ExclusiveLowerBoundary o -> -1;
+      case InclusiveLowerBoundary o -> -1;
+    };
+  }
 
   @Override
   public int compareTo(final Version version) {

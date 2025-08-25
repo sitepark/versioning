@@ -6,25 +6,23 @@ import java.text.ParseException;
  * Implements the {@link BaseVersion}-parsing process.
  * Results are either {@link SnapshotVersion}s or {@link ReleaseVersion}s,
  * depending on wether the last {@code qualifier} is exactly {@code "SNAPSHOT"}.
- * To be able to handle these two cases more elegantly they are wrapped in a
- * {@link PotentialConcreteSnapshotVersion} instance.
  *
  * <strong>Attention:</strong> this class is meant for a single execution and
  * therefore not thread safe!
  */
-class PotentialSnapshotParseExecutor extends VersionParseExecutor<PotentialSnapshotVersion> {
+class BaseVersionParseExecutor extends VersionParseExecutor<BaseVersion> {
 
   private boolean hasSnapshotQualifier = false;
 
-  PotentialSnapshotParseExecutor(final String string, final byte flags) {
+  BaseVersionParseExecutor(final String string, final byte flags) {
     super(string, flags);
   }
 
   @Override
-  protected PotentialSnapshotVersion buildVersion() {
+  protected BaseVersion buildVersion() {
     return this.hasSnapshotQualifier
-        ? PotentialSnapshotVersion.ofSnapshot(this.versionBuilder.buildSnapshot())
-        : PotentialSnapshotVersion.ofRelease(this.versionBuilder.buildRelease());
+        ? this.versionBuilder.buildSnapshot()
+        : this.versionBuilder.buildRelease();
   }
 
   @Override

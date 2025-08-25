@@ -356,7 +356,7 @@ public final class VersionTypes {
 
   @Override
   public boolean equals(final Object other) {
-    return other instanceof VersionTypes && this.value == ((VersionTypes) other).value;
+    return other instanceof final VersionTypes that && this.value == that.value;
   }
 
   @Override

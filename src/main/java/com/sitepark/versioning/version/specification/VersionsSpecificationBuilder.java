@@ -1,10 +1,16 @@
 package com.sitepark.versioning.version.specification;
 
+import com.sitepark.versioning.Branch;
+import com.sitepark.versioning.version.BaseVersion;
 import com.sitepark.versioning.version.specification.element.ElementsIntersectException;
 import com.sitepark.versioning.version.specification.element.ExplicitVersionElement;
 import com.sitepark.versioning.version.specification.element.SortedElementBranchSet;
 import com.sitepark.versioning.version.specification.element.SpecificationElement;
 import com.sitepark.versioning.version.specification.element.VersionRangeElement;
+import com.sitepark.versioning.version.specification.element.boundary.Boundary;
+import com.sitepark.versioning.version.specification.element.boundary.InvalidBoundariesException;
+import com.sitepark.versioning.version.specification.element.boundary.UnlimitedLowerBoundary;
+import com.sitepark.versioning.version.specification.element.boundary.UnlimitedUpperBoundary;
 
 /**
  * A builder class to create {@link VersionsSpecification} instances.
@@ -41,15 +47,24 @@ public final class VersionsSpecificationBuilder {
    * This method accesses a {@link SortedElementBranchSet} and is therefore
    * not thread-safe!
    *
-   * @param versionRangeElement the {@code VersionRangeElement} to add
+   * @param lower the {@link Boundary.Lower Lower} {@link Boundary} of the range
+   * @param upper the {@link Boundary.Upper Upper} {@code Boundary} of the range
    * @return this instance
+   * @throws InvalidBoundariesException if the lower {@code Boundary} is
+   *                                    considered larger than the upper
+   *                                    {@code Boundary}, both are
+   *                                    {@link UnlimitedLowerBoundary} and
+   *                                    {@link UnlimitedUpperBoundary} instances
+   *                                    or both are based on
+   *                                    {@link BaseVersion}s with different
+   *                                    {@link Branch}es.
    * @throws ElementsIntersectException if the specified element intersects
    *                                    with a already present one
    * @see #build()
    */
   public VersionsSpecificationBuilder addVersionRange(
-      final VersionRangeElement versionRangeElement) {
-    this.elements.add(versionRangeElement);
+      final Boundary.Lower lower, final Boundary.Upper upper) {
+    this.elements.add(new VersionRangeElement(lower, upper));
     return this;
   }
 
@@ -61,15 +76,14 @@ public final class VersionsSpecificationBuilder {
    * This method accesses a {@code SortedElementBranchSet} and is therefore
    * not thread-safe!
    *
-   * @param explicitVersionElement the {@link ExplicitVersionElement} to add
+   * @param version the {@link BaseVersion} to add
    * @return this instance
    * @throws ElementsIntersectException if the specified element intersects
    *                                    with a already present one
    * @see #build()
    */
-  public VersionsSpecificationBuilder addExplicitVersion(
-      final ExplicitVersionElement explicitVersionElement) {
-    this.elements.add(explicitVersionElement);
+  public VersionsSpecificationBuilder addExplicitVersion(final BaseVersion version) {
+    this.elements.add(new ExplicitVersionElement(version));
     return this;
   }
 
@@ -88,12 +102,11 @@ public final class VersionsSpecificationBuilder {
    * @return a new {@code VersionsSpecification} instance build from all
    *         fields set on this instance
    * @throws IllegalArgumentException if this builder is empty
-   * @see #addVersionRange(VersionRangeElement)
-   * @see #addExplicitVersion(ExplicitVersionElement)
+   * @see #addVersionRange(Boundary.Lower, Boundary.Upper)
+   * @see #addExplicitVersion(BaseVersion)
    */
   public VersionsSpecification build() {
-    final VersionsSpecification specification = new VersionsSpecification(this);
-    return specification;
+    return new VersionsSpecification(this);
   }
 
   SortedElementBranchSet getElements() {

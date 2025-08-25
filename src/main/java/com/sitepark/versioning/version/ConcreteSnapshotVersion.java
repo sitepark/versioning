@@ -20,9 +20,7 @@ package com.sitepark.versioning.version;
  *        .buildSnapshot();
  *    final ConcreteSnapshotVersion concreteSnapshot = new VersionBuilder()
  *        .setMajor(1)
- *        .setConcreteSnapshotTimestamp("12345678.123456")
- *        .setConcreteSnapshotBuildnumber(42)
- *        .buildConcreteSnapshot();
+ *        .buildConcreteSnapshot("12345678.123456", 42);
  *
  *    assert(concreteSnapshot.compareTo(snapshot) == 0);
  *    assert(snapshot.compareTo(concreteSnapshot) == 0);
@@ -36,16 +34,17 @@ package com.sitepark.versioning.version;
  * caused by/interpreted as normal {@code qualifiers} of a
  * {@link ReleaseVersion}.
  */
-public class ConcreteSnapshotVersion extends AbstractVersion implements ConcreteVersion {
+public final class ConcreteSnapshotVersion extends AbstractVersion implements ConcreteVersion {
   private static final long serialVersionUID = -8343574484894405153L;
 
   private final String timestamp;
   private final int buildnumber;
 
-  ConcreteSnapshotVersion(final VersionBuilder builder) {
+  ConcreteSnapshotVersion(
+      final VersionBuilder builder, final String timestamp, final int buildnumber) {
     super(builder);
-    this.timestamp = builder.getConcreteSnapshotTimestamp().get();
-    this.buildnumber = builder.getConcreteSnapshotBuildnumber().get();
+    this.timestamp = timestamp;
+    this.buildnumber = buildnumber;
   }
 
   /**
@@ -97,8 +96,7 @@ public class ConcreteSnapshotVersion extends AbstractVersion implements Concrete
   @Override
   public int compareTo(final Version other) {
     int cmp = super.compareTo(other);
-    if (cmp == 0 && other instanceof ConcreteSnapshotVersion) {
-      final ConcreteSnapshotVersion that = (ConcreteSnapshotVersion) other;
+    if (cmp == 0 && other instanceof final ConcreteSnapshotVersion that) {
       if ((cmp = this.timestamp.compareTo(that.timestamp)) != 0) {
         return cmp;
       }
@@ -147,11 +145,8 @@ public class ConcreteSnapshotVersion extends AbstractVersion implements Concrete
 
   @Override
   public boolean equals(final Object other) {
-    if (!(other instanceof ConcreteSnapshotVersion)) {
-      return false;
-    }
-    final ConcreteSnapshotVersion that = (ConcreteSnapshotVersion) other;
-    return super.equals(other)
+    return other instanceof final ConcreteSnapshotVersion that
+        && super.equals(that)
         && this.timestamp.equals(that.timestamp)
         && this.buildnumber == that.buildnumber;
   }

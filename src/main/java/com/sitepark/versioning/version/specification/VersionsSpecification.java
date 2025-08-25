@@ -7,7 +7,6 @@ import com.sitepark.versioning.version.specification.element.SortedElementBranch
 import com.sitepark.versioning.version.specification.element.SpecificationElement;
 import com.sitepark.versioning.version.specification.element.UnmodifiableSortedElementBranchSet;
 import com.sitepark.versioning.version.specification.element.VersionRangeElement;
-import com.sitepark.versioning.version.specification.element.boundary.Boundaries;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Optional;
@@ -54,8 +53,8 @@ public final class VersionsSpecification implements Serializable {
    *
    * This is the case if any of this instances {@link SpecificationElement}s
    * consideres the {@code Version} to be either equal (in the case of
-   * {@link ExplicitVersionElement}s) or inside it's {@link Boundaries} (in
-   * the case of {@link VersionRangeElement}s).
+   * {@link ExplicitVersionElement}s) or inside its boundaries (in the case of
+   * {@link VersionRangeElement}s).
    *
    * @param version the {@code Version} to check
    * @return {@code true} if the {@code Version} is compliant with this
@@ -122,10 +121,6 @@ public final class VersionsSpecification implements Serializable {
 
   @Override
   public boolean equals(final Object other) {
-    if (!(other instanceof VersionsSpecification)) {
-      return false;
-    }
-    final VersionsSpecification that = (VersionsSpecification) other;
-    return this.elements.equals(that.elements);
+    return other instanceof final VersionsSpecification that && this.elements.equals(that.elements);
   }
 }

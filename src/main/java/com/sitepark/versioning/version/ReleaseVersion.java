@@ -5,7 +5,7 @@ package com.sitepark.versioning.version;
  * In contrast to {@link SnapshotVersion}s this class referes to exactly one
  * {@code Version}.
  */
-public class ReleaseVersion extends AbstractVersion implements BaseVersion, ConcreteVersion {
+public final class ReleaseVersion extends AbstractVersion implements BaseVersion, ConcreteVersion {
   private static final long serialVersionUID = -1839392003320400343L;
 
   ReleaseVersion(final VersionBuilder builder) {

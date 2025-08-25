@@ -46,7 +46,7 @@ public class SortedElementSet implements Set<SpecificationElement>, Serializable
 
     @Override
     public boolean equals(final Object other) {
-      return other != null && other instanceof Node && this.element.equals(((Node) other).element);
+      return other instanceof final Node that && this.element.equals(that.element);
     }
   }
 
@@ -586,10 +586,9 @@ public class SortedElementSet implements Set<SpecificationElement>, Serializable
 
   @Override
   public boolean equals(final Object other) {
-    if (!(other instanceof SortedElementSet)) {
+    if (!(other instanceof final SortedElementSet that)) {
       return false;
     }
-    final SortedElementSet that = (SortedElementSet) other;
     for (Node left = this.first, right = that.first;
         left != null || right != null;
         left = left.next, right = right.next) {

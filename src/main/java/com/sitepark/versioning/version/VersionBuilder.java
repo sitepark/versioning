@@ -5,17 +5,14 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A builder class to instantiate {@link ReleaseVersion}s,
  * {@link SnapshotVersion}s and {@link ConcreteSnapshotVersion}s.
- * For {@code ConcreteSnapshotVersion}s both fields
- * {@link #setConcreteSnapshotTimestamp(String)} and
- * {@link #setConcreteSnapshotBuildnumber(int)} are required and will cause a
- * {@link IllegalArgumentException} if not specified.
- * All other fields have default values.
+ * {@code ConcreteSnapshotVersion}s require an additional {@code timestamp} and
+ * {@code buildnumber}.
+ * All fields have default values.
  *
  * Usage:
  * <pre>new VersionBuilder()
@@ -31,11 +28,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <pre>new VersionBuilder()
  *    .setMajor(1)
  *    .setBranch(new Branch("new_core_engine"))
- *    .setConcreteSnapshotTimestamp(
+ *    .buildConcreteSnapshot(
  *            DateTimeFormatter.ofPattern("yyyyMMdd.HHmmss")
- *                .format(LocalDate.now()))
- *    .setConcreteSnapshotBuildnumber(this.buildnumber++)
- *    .buildConcreteSnapshot();</pre>
+ *                .format(LocalDate.now())
+ *            this.buildnumber++);</pre>
  */
 public class VersionBuilder {
   private AtomicInteger major;
@@ -43,10 +39,6 @@ public class VersionBuilder {
   private AtomicInteger incremental;
   private Branch branch;
   private final List<String> qualifiers;
-
-  // TODO: should this be a Date?
-  private Optional<String> concreteSnapshotTimestamp;
-  private Optional<Integer> concreteSnapshotBuildnumber;
 
   /**
    * Class Constructor
@@ -57,8 +49,6 @@ public class VersionBuilder {
     this.incremental = new AtomicInteger(0);
     this.branch = Branch.DEVELOP;
     this.qualifiers = Collections.synchronizedList(new LinkedList<>());
-    this.concreteSnapshotTimestamp = Optional.empty();
-    this.concreteSnapshotBuildnumber = Optional.empty();
   }
 
   /**
@@ -207,63 +197,13 @@ public class VersionBuilder {
   }
 
   /**
-   * Specifies a {@code timestamp} to set on {@link ConcreteSnapshotVersion}s
-   * created by this instance.
-   * This value should follow the format {@code "yyyyMMdd.HHmmss"}.
-   *
-   * @param timestamp the timestamp to set
-   * @return this instance
-   * @see ConcreteSnapshotVersion#getTimestamp()
-   */
-  public VersionBuilder setConcreteSnapshotTimestamp(final String timestamp) {
-    this.concreteSnapshotTimestamp = Optional.of(timestamp);
-    return this;
-  }
-
-  /**
-   * Returns the currently set {@code timestamp} for
-   * {@link ConcreteSnapshotVersion}s.
-   * This value should follow the format {@code "yyyyMMdd.HHmmss"}.
-   *
-   * @return the timestamp or an empty {@link Optional} if absent
-   * @see ConcreteSnapshotVersion#getBuildnumber()
-   */
-  public Optional<String> getConcreteSnapshotTimestamp() {
-    return this.concreteSnapshotTimestamp;
-  }
-
-  /**
-   * Specifies a {@code buildnumber} to set on
-   * {@link ConcreteSnapshotVersion}s created by this instance.
-   *
-   * @param buildnumber the buildnumber to set
-   * @return this instance
-   * @see ConcreteSnapshotVersion#getBuildnumber()
-   */
-  public VersionBuilder setConcreteSnapshotBuildnumber(final int buildnumber) {
-    this.concreteSnapshotBuildnumber = Optional.of(buildnumber);
-    return this;
-  }
-
-  /**
-   * Returns the currently set {@code buildnumber} for
-   * {@link ConcreteSnapshotVersion}s.
-   *
-   * @return the buildnumber or an empty {@link Optional} if absent
-   * @see ConcreteSnapshotVersion#getBuildnumber()
-   */
-  public Optional<Integer> getConcreteSnapshotBuildnumber() {
-    return this.concreteSnapshotBuildnumber;
-  }
-
-  /**
    * Builds a {@link ReleaseVersion} with all set fields.
    * For Fields that were not explicitly specified their default values are
    * applied.
    *
    * @return a new ReleaseVersion
    * @see #buildSnapshot()
-   * @see #buildConcreteSnapshot()
+   * @see #buildConcreteSnapshot(String, int)
    */
   public ReleaseVersion buildRelease() {
     final ReleaseVersion value = new ReleaseVersion(this);
@@ -277,7 +217,7 @@ public class VersionBuilder {
    *
    * @return a new SnapshotVersion
    * @see #buildRelease()
-   * @see #buildConcreteSnapshot()
+   * @see #buildConcreteSnapshot(String, int)
    */
   public SnapshotVersion buildSnapshot() {
     final SnapshotVersion value = new SnapshotVersion(this);
@@ -290,21 +230,14 @@ public class VersionBuilder {
    * specified.  Other Fields that were not explicitly specified have their
    * default values applied.
    *
+   * @param timestamp the timestamp to set
+   * @param buildnumber the buildnumber to set
    * @return a new ConcreteSnapshotVersion
-   * @throws IllegalArgumentException if either {@code timestamp} or
-   *                                  {@code buildnumber} are not set
-   * @see #setConcreteSnapshotTimestamp(String)
-   * @see #setConcreteSnapshotBuildnumber(int)
    * @see #buildRelease()
    * @see #buildSnapshot()
    */
-  public ConcreteSnapshotVersion buildConcreteSnapshot() throws IllegalArgumentException {
-    if (this.concreteSnapshotTimestamp.isEmpty()) {
-      throw new IllegalArgumentException("cannot build concrete snapshots without a buildnumber");
-    }
-    if (this.concreteSnapshotBuildnumber.isEmpty()) {
-      throw new IllegalArgumentException("cannot build concrete snapshots without a timestamp");
-    }
-    return new ConcreteSnapshotVersion(this);
+  public ConcreteSnapshotVersion buildConcreteSnapshot(
+      final String timestamp, final int buildnumber) {
+    return new ConcreteSnapshotVersion(this, timestamp, buildnumber);
   }
 }

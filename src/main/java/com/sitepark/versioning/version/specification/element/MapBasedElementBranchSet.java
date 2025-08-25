@@ -29,12 +29,11 @@ abstract class MapBasedElementBranchSet<E extends SortedElementSet> implements E
   @Override
   public boolean containsVersion(final Version version) {
     final E set = this.branchMap.get(version.getBranch());
-    if (set == null) {
-      return false;
-    }
-    for (final SpecificationElement element : set) {
-      if (element.containsVersion(version)) {
-        return true;
+    if (set != null) {
+      for (final SpecificationElement element : set) {
+        if (element.containsVersion(version)) {
+          return true;
+        }
       }
     }
     return false;
@@ -59,10 +58,9 @@ abstract class MapBasedElementBranchSet<E extends SortedElementSet> implements E
    * @see #containsAll(Collection)
    */
   public boolean contains(final Object object) {
-    if (!(object instanceof SpecificationElement)) {
+    if (!(object instanceof final SpecificationElement element)) {
       return false;
     }
-    final SpecificationElement element = (SpecificationElement) object;
     final E list = this.branchMap.get(element.getBranch());
     return list != null ? list.contains(element) : false;
   }
@@ -159,16 +157,15 @@ abstract class MapBasedElementBranchSet<E extends SortedElementSet> implements E
    */
   @Override
   public boolean remove(final Object other) {
-    if (!(other instanceof SpecificationElement)) {
+    if (!(other instanceof final SpecificationElement element)) {
       return false;
     }
-    final Branch branch = ((SpecificationElement) other).getBranch();
-    final SortedElementSet set = this.branchMap.get(branch);
+    final SortedElementSet set = this.branchMap.get(element.getBranch());
     if (set == null || set.remove(other)) {
       return false;
     }
     if (set.isEmpty()) {
-      this.branchMap.remove(branch, set);
+      this.branchMap.remove(element.getBranch(), set);
     }
     return true;
   }

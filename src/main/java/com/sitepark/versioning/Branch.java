@@ -98,10 +98,7 @@ public final class Branch implements Comparable<Branch>, Serializable {
 
   @Override
   public boolean equals(final Object other) {
-    if (!(other instanceof Branch)) {
-      return false;
-    }
-    return this.value.equals(((Branch) other).value);
+    return other instanceof final Branch that && this.value.equals(that.value);
   }
 
   @Override

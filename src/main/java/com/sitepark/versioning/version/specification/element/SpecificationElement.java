@@ -1,10 +1,8 @@
 package com.sitepark.versioning.version.specification.element;
 
 import com.sitepark.versioning.Branch;
-import com.sitepark.versioning.version.BaseVersion;
 import com.sitepark.versioning.version.Version;
 import com.sitepark.versioning.version.specification.VersionsSpecification;
-import com.sitepark.versioning.version.specification.element.boundary.Boundaries;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -12,8 +10,8 @@ import java.util.Optional;
  * Defines a subset of {@link Version}s as part of a
  * {@link VersionsSpecification}.
  *
- * A implementation may either be {@link VersionBased} or
- * {@link BoundariesBased}.
+ * A implementation may either be {@link ExplicitVersionElement} or
+ * {@link VersionRangeElement}.
  *
  * <p>
  * Each instance has to define a {@code Branch} to limit it's contained
@@ -25,13 +23,8 @@ import java.util.Optional;
  * @see ExplicitVersionElement
  * @see VersionRangeElement
  */
-public abstract class SpecificationElement implements Serializable {
-  private static final long serialVersionUID = 3293062041380042736L;
-
-  /**
-   * Class Constructor.
-   */
-  SpecificationElement() {}
+public sealed interface SpecificationElement extends Serializable
+    permits ExplicitVersionElement, VersionRangeElement {
 
   /**
    * The result of a comparison of two {@link SpecificationElement}s.
@@ -101,65 +94,6 @@ public abstract class SpecificationElement implements Serializable {
   }
 
   /**
-   * A type of a {@link SpecificationElement} that is based on a singular
-   * {@link Version}.
-   */
-  public abstract static class VersionBased extends SpecificationElement {
-    private static final long serialVersionUID = 5066407549129927233L;
-
-    /**
-     * Class Constructor.
-     */
-    VersionBased() {}
-
-    /**
-     * Returns the {@link Version} this instance is based on.
-     *
-     * @return the {@code Version} of this instance
-     */
-    abstract BaseVersion getVersion();
-  }
-
-  /**
-   * A type of a {@link SpecificationElement} that is based on
-   * {@link Boundaries}.
-   */
-  public abstract static class BoundariesBased extends SpecificationElement {
-    private static final long serialVersionUID = -3922176996016553181L;
-
-    /**
-     * Class Constructor.
-     */
-    BoundariesBased() {}
-
-    /**
-     * Returns the {@link Boundaries} this instance is based on.
-     *
-     * @return the {@code Boundaries} of this instance
-     */
-    abstract Boundaries<?, ?> getBoundaries();
-  }
-
-  /**
-   * A {@code Exception} that signifies a sub class of
-   * {@link SpecificationElement} was encounted that is neither
-   * {@link VersionBased} nor {@link BoundariesBased}.
-   */
-  public static final class UnknownSpecificationElementException extends RuntimeException {
-    private static final long serialVersionUID = -2028795695995999260L;
-
-    /**
-     * Class Constructor specifying the unknown {@link SpecificationElement}
-     * sub class.
-     *
-     * @param clazz the {@code SpecificationElement} sub class
-     */
-    public UnknownSpecificationElementException(final Class<? extends SpecificationElement> clazz) {
-      super("unknown SpecificationElement subclass \"" + clazz.getName() + "\" encountered");
-    }
-  }
-
-  /**
    * Returns the {@link Branch} this {@link SpecificationElement} is limited
    * to.
    *
@@ -185,84 +119,6 @@ public abstract class SpecificationElement implements Serializable {
 
   /**
    * Calculates an intersection between this {@link SpecificationElement} and
-   * a specified one that is {@link VersionBased}.
-   *
-   * The resulting intersection is represented by a new
-   * {@code SpecificationElement} inside an {@link Optional}.  If the two
-   * instances do not intersect the returned {@code Optional} is empty.
-   *
-   * <p>
-   * {@link SpecificationElement}s may only intersect with one another if
-   * they have equal {@code Branch}es.
-   *
-   * @param other the {@code VersionBased} {@code SpecificationElement} to
-   *        calculate an intersection with
-   * @return a {@link Optional} containing the intersection with the specified
-   *         instance or an empty one if they do not intersect
-   * @see Branch#compareTo(Branch)
-   * @see #getIntersection(SpecificationElement)
-   * @see #getIntersectionWithBoundariesBased(BoundariesBased)
-   */
-  abstract Optional<SpecificationElement> getIntersectionWithVersionBased(VersionBased other);
-
-  /**
-   * Calculates an intersection between this {@link SpecificationElement} and
-   * a specified one that is {@link BoundariesBased}.
-   *
-   * The resulting intersection is represented by a new
-   * {@code SpecificationElement} inside an {@link Optional}.  If the two
-   * instances do not intersect the returned {@code Optional} is empty.
-   *
-   * <p>
-   * {@link SpecificationElement}s may only intersect with one another if
-   * they have equal {@code Branch}es.
-   *
-   * @param other the {@code VersionBased} {@code SpecificationElement} to
-   *        calculate an intersection with
-   * @return a {@link Optional} containing the intersection with the specified
-   *         instance or an empty one if they do not intersect
-   * @see Branch#compareTo(Branch)
-   * @see #getIntersection(SpecificationElement)
-   * @see #getIntersectionWithVersionBased(VersionBased)
-   */
-  abstract Optional<SpecificationElement> getIntersectionWithBoundariesBased(BoundariesBased other);
-
-  /**
-   * Compares this {@link SpecificationElement} to another
-   * {@link VersionBased} one.
-   *
-   * {@link SpecificationElement}s may only intersect with one another if
-   * they have equal {@code Branch}es; Otherwise they will always be either
-   * {@link ComparisonResult#LOWER} or {@link ComparisonResult#LOWER}.
-   *
-   * @param other the {@code VersionBased} {@code SpecificationElement} to
-   *        compare this instance to
-   * @return the result of the comparison
-   * @see Branch#compareTo(Branch)
-   * @see #compareTo(SpecificationElement)
-   * @see #compareToBoundariesBased(BoundariesBased)
-   */
-  abstract ComparisonResult compareToVersionBased(VersionBased other);
-
-  /**
-   * Compares this {@link SpecificationElement} to another
-   * {@link BoundariesBased} one.
-   *
-   * {@link SpecificationElement}s may only intersect with one another if
-   * they have equal {@code Branch}es; Otherwise they will always be either
-   * {@link ComparisonResult#LOWER} or {@link ComparisonResult#LOWER}.
-   *
-   * @param other the {@code BoundariesBased} {@code SpecificationElement} to
-   *        compare this instance to
-   * @return the result of the comparison
-   * @see Branch#compareTo(Branch)
-   * @see #compareTo(SpecificationElement)
-   * @see #compareToVersionBased(VersionBased)
-   */
-  abstract ComparisonResult compareToBoundariesBased(BoundariesBased other);
-
-  /**
-   * Calculates an intersection between this {@link SpecificationElement} and
    * a specified one.
    *
    * The resulting intersection is represented by a new
@@ -273,23 +129,13 @@ public abstract class SpecificationElement implements Serializable {
    * {@link SpecificationElement}s may only intersect with one another if
    * they have equal {@code Branch}es.
    *
-   * @param other the {@code SpecificationElement} to calculate an
+   * @param element the {@code SpecificationElement} to calculate an
    *              intersection with
    * @return a {@link Optional} containing the intersection with the specified
    *         instance or an empty one if they do not intersect
    * @see Branch#compareTo(Branch)
-   * @see #getIntersectionWithVersionBased(VersionBased)
-   * @see #getIntersectionWithBoundariesBased(BoundariesBased)
    */
-  public final Optional<SpecificationElement> getIntersection(final SpecificationElement other) {
-    if (other instanceof VersionBased) {
-      return this.getIntersectionWithVersionBased((VersionBased) other);
-    }
-    if (other instanceof BoundariesBased) {
-      return this.getIntersectionWithBoundariesBased((BoundariesBased) other);
-    }
-    throw new UnknownSpecificationElementException(other.getClass());
-  }
+  public abstract Optional<SpecificationElement> getIntersection(SpecificationElement element);
 
   /**
    * Compares this {@link SpecificationElement} to another one.
@@ -298,24 +144,9 @@ public abstract class SpecificationElement implements Serializable {
    * they have equal {@code Branch}es; Otherwise they will always be either
    * {@link ComparisonResult#LOWER} or {@link ComparisonResult#LOWER}.
    *
-   * @param other the {@code SpecificationElement} to compare this instance to
+   * @param element the {@code SpecificationElement} to compare this instance to
    * @return the result of the comparison
-   * @throws UnknownSpecificationElementException if the supplied
-   *                                              {@code SpecificationElement}
-   *                                              is not a subclass of either
-   *                                              {@link VersionBased} or
-   *                                              {@link BoundariesBased}.
    * @see Branch#compareTo(Branch)
-   * @see #compareToVersionBased(VersionBased)
-   * @see #compareToBoundariesBased(BoundariesBased)
    */
-  public final ComparisonResult compareTo(final SpecificationElement other) {
-    if (other instanceof VersionBased) {
-      return this.compareToVersionBased((VersionBased) other);
-    }
-    if (other instanceof BoundariesBased) {
-      return this.compareToBoundariesBased((BoundariesBased) other);
-    }
-    throw new UnknownSpecificationElementException(other.getClass());
-  }
+  public abstract ComparisonResult compareTo(SpecificationElement element);
 }

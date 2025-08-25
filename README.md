@@ -7,7 +7,7 @@ Sitepark Versioning is a library, that provides reusable `Version` and `Versions
 
 ## Requirements
 
-- Java 11 or higher
+- Java 21 or higher
 
 ## Installing
 
@@ -16,7 +16,7 @@ Simply add this [maven](https://maven.apache.org/) dependency:
 	<dependency>
 		<groupId>com.sitepark</groupId>
 		<artifactId>versioning</artifactId>
-		<version>2.1.0</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</dependency>
 ```
 
@@ -25,15 +25,15 @@ Simply add this [maven](https://maven.apache.org/) dependency:
 ### Version
 
 `Version` is the supertype of all version classes.  To further specify _which_ version(s) are used the following subclasses are available:
-| class                     | description                                                                   |
-| ------------------------- | ----------------------------------------------------------------------------- |
-| `Version`                 | __Any__ version                                                               |
-| `BaseVersion`             | A general purpose version for external usage                                  |
-| `ConcreteVersion`         | A unique version.  Usually an implementation detail                           |
-| `DatedBaseVersion`        | `BaseVersion` with a date to compare                                          |
-| `ReleaseVersion`          | A released version                                                            |
-| `SnapshotVersion`         | A rolling unreleased version.  Can be the superset of many `ConcreteVersion`s |
-| `ConcreteSnapshotVersion` | A unique unreleased version                                                   |
+
+| class                     | description                                                                  |
+| :------------------------ | :--------------------------------------------------------------------------- |
+| `Version`                 | __Any__ version                                                              |
+| `BaseVersion`             | A general purpose version for external usage                                 |
+| `ConcreteVersion`         | A unique version. Usually an implementation detail                           |
+| `ReleaseVersion`          | A released version                                                           |
+| `SnapshotVersion`         | A rolling unreleased version. Can be the superset of many `ConcreteVersion`s |
+| `ConcreteSnapshotVersion` | A unique unreleased version                                                  |
 
 ```mermaid
 ---
@@ -43,7 +43,6 @@ version class diagram
 classDiagram
 	Version <|-- BaseVersion : extends
 	Version <|-- ConcreteVersion : extends
-	BaseVersion <|-- DatedBaseVersion : implements
 	BaseVersion <|-- SnapshotVersion : implements
 	BaseVersion <|-- ReleaseVersion : implements
 	ConcreteVersion <|-- ReleaseVersion : implements
@@ -64,10 +63,6 @@ classDiagram
 	class ConcreteVersion {
 		<<interface>>
 		BaseVersion asBaseVersion()
-	}
-	class DatedBaseVersion {
-		LocalDateTime getDate()
-		BaseVersion asUndated()
 	}
 	class SnapshotVersion {
 		ReleaseVersion toRelease()
@@ -148,68 +143,38 @@ If we expect/require the `String`s we feed into the `VersionParser` to all repre
 
 For example, a `String` like `"1.0.1-SNAPSHOT"` would result in a `ReleaseVersion` with the qualifier `"SNAPSHOT"`.  Similarly `"1.0.2-20233005.1415-7"` would also return a `ReleaseVersion` with the qualifiers `"20233005.1415"` and `"7"`.
 
-#### PotentialSnapshots
+#### BaseVersions
 
-The `parsePotentialSnapshot` method does respect the `"-SNAPSHOT"` qualifier (if it is the last one).  This means, that a `String` ending with this postfix will result in a `SnapshotVersion` and others will produce a `ReleaseVersion`.  Either is wrapped inside a `PotentialSnapshotVersion` object, which allows functional style handling of both cases.  
+The `parseBaseVersion` method does respect the `"-SNAPSHOT"` qualifier (if it is the last one).  This means, that a `String` ending with this postfix will result in a `SnapshotVersion` and others will produce a `ReleaseVersion`.
 
 Here are some examples:
 ```java
-final PotentialSnapshotVersion version = VersionParser.DEFAULT_PARSER
-	.parsePotentialSnapshot("1.2-SNAPSHOT");
+final BaseVersion version = VersionParser.DEFAULT_PARSER
+    .parseBaseVersion("1.2-SNAPSHOT");
 
-// map each class individually to a different one
-final ReleaseVersion release = version.mapEither(
-		Snapshot::toRelease,
-		Function.identity());
-
-// execute code only if the version is a certain type
-version.ifIsRelease(this::doSomethingWithReleaseVersion);
-
-// throw an exception if the version is an unexpected type
-final SnapshotVersion snapshot = version.getSnapshotOrElseThrow(
-		() -> new IllegalArgumentException(
-				"this process requires snapshot versions!"));
-
-// transform it into an Optional for one type
-version.getRelease()
-	.flatMap(this::tryGetSomethingForReleaseVersion)
-	.orElseGet(this::getDefaultValue);
-
-// or simply get the wrapped version regardless of it's class
-final BaseVersion base = version.get();
+// these work well with pattern matching!
+final ReleaseVersion release = switch (version) {
+    case SnapshotVersion snapshot -> snapshot.toRelease(),
+    case ReleaseVersion release -> release;
+};
 ```
 
 #### PotentialConcreteSnapshots
 
-The `parsePotentialConcreteSnapshot` method is simmilar to [PotentialSnapshots](#PotentialSnapshots).  If a given `String` ends with two qualifiers that match the format explained below a `ConcreteSnapshotVersion` will be constructed and a `ReleaseVersion` otherwise.  The result is then wrapped inside a `PotentialConcreteSnapshotVersion` object, allowing functional style handling of either case.
+The `parseConcreteVersion` method is simmilar to [BaseVersions](#BaseVersions).  If a given `String` ends with two qualifiers that match the format explained below a `ConcreteSnapshotVersion` will be constructed and a `ReleaseVersion` otherwise.
 
 __Format__: the second to last qualifier requires eight digits, a dot and then 6 more digits.  Directly followed by a qualifier, that only consists of digits.  Or as described by a regular expression: `-\d{8}\.\d{6}-\d+$`.  
 This is based on maven naming unique snapshot versions by replacing `"-SNAPSHOT"` with the build date ("Etc/UTC" timezone, `yyyyMMdd.HHmmss` format) and a build number.
 
 ```java
-final PotentialConcreteSnapshotVersion version = VersionParser.DEFAULT_PARSER
-	.parsePotentialConcreteSnapshot("1.2-20210129.214836");
+final ConcreteVersion version = VersionParser.DEFAULT_PARSER
+    .parseConcreteVersion("1.2-20210129.214836-2");
 
-// map each class individually to a different one
-final BaseVersion base = version.mapEither(
-		ConcreteSnapshot::asBaseVersion,
-		Function.identity());
-
-// execute code only if the version is a certain type
-version.ifIsRelease(this::doSomethingWithReleaseVersion);
-
-// throw an exception if the version is an unexpected type
-final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElseThrow(
-		() -> new IllegalArgumentException(
-				"this process requires concrete snapshot versions!"));
-
-// transform it into an Optional for one type
-version.getSnapshot()
-	.flatMap(this::tryGetSomethingForConcreteSnapshotVersion)
-	.orElseGet(this::getDefaultValue);
-
-// or simply get the wrapped version regardless of it's class
-final ConcreteVersion concrete = version.get();
+// these work well with pattern matching!
+final BaseVersion release = switch (version) {
+    case ConcreteSnapshotVersion snapshot -> snapshot.asBaseVersion(),
+    case ReleaseVersion release -> release;
+};
 ```
 
 ### VersionFormatter
@@ -218,7 +183,7 @@ To flixibly transform `Version`s to `String`s a configurable `VersionFormatter` 
 This class takes a `String` as format, which determines how `Version`s feed into it are transformed.  Such a `String` may contain the following keywords surrounded by colons (`:`):
 
 | keyword     | description                                    |
-| ----------- | ---------------------------------------------- |
+| :---------- | :--------------------------------------------- |
 | MAJOR       | the major                                      |
 | MINOR       | the minor                                      |
 | INCREMENTAL | the incremental                                |
@@ -289,7 +254,7 @@ They can be created either manually via `VersionsSpecificationBuilder` or from `
 A `VersionRange` consists of exactly one of these lower and upper `Boundary`s\* separated by a comma (`,`):  
 
 | Name                                                                                                                               | Syntax       | Description      |
-| ---------------------------------------------------------------------------------------------------------------------------------- | ------------ | ---------------- |
+| :--------------------------------------------------------------------------------------------------------------------------------- | :----------- | :--------------- |
 | [ExclusiveLowerBoundary](src/main/java/com/sitepark/versioning/version/specification/element/boundary/ExclusiveLowerBoundary.java) | (\<version\> | __x > version__  |
 | [InclusiveLowerBoundary](src/main/java/com/sitepark/versioning/version/specification/element/boundary/InclusiveLowerBoundary.java) | [\<version\> | __x >= version__ |
 | [UnlimitedLowerBoundary](src/main/java/com/sitepark/versioning/version/specification/element/boundary/UnlimitedLowerBoundary.java) | (            | any __x__        |
@@ -304,7 +269,7 @@ Each `Version` in a `VersionsSpecification`-`String` may be written in any way t
 Here are some examples for valid `VersionsSpecification`s:
 
 | String                      | Explaination                               |
-| --------------------------- | ------------------------------------------ |
+| :-------------------------- | :----------------------------------------- |
 | 1.0                         | __x == 1.0.0__.                            |
 | (, 1.0\]                    | __x <= 1.0.0__                             |
 | \[1.2, 1.3\]                | __1.2.0 <= x <= 1.3.0__                    |

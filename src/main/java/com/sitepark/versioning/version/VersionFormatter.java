@@ -215,30 +215,26 @@ public final class VersionFormatter {
    * These may either be {@link StringElement} for literals or
    * {@link KeywordElement}s that resolve {@link Keyword}s.
    */
-  private abstract static class FormatElement {
+  @SuppressWarnings("PMD.ImplicitFunctionalInterface")
+  private static interface FormatElement {
 
     /**
      * Formats a {@link Version} into a String.
      */
-    abstract String format(Version version);
+    public String format(Version version);
   }
 
   /**
    * An {@link FormatElement} of a {@link VersionFormatter}s format,
    * representing a String literal.
    */
-  private static final class StringElement extends FormatElement {
-    private final String string;
-
-    StringElement(final String string) {
-      this.string = string;
-    }
+  private static final record StringElement(String string) implements FormatElement {
 
     /**
      * Returns the String literal represented by this instance.
      */
     @Override
-    String format(final Version version) {
+    public String format(final Version version) {
       return this.string;
     }
   }
@@ -247,9 +243,7 @@ public final class VersionFormatter {
    * An {@link FormatElement} of a {@link VersionFormatter}s format,
    * representing a String literal.
    */
-  private static final class KeywordElement extends FormatElement {
-    private final Keyword keyword;
-    private final String prefix;
+  private static record KeywordElement(Keyword keyword, String prefix) implements FormatElement {
 
     /**
      * Parses a part of a {@link VersionFormatter}s format, representing a
@@ -268,17 +262,12 @@ public final class VersionFormatter {
       throw new IllegalFormatFlagsException(string);
     }
 
-    KeywordElement(final Keyword keyword, final String prefix) {
-      this.prefix = prefix;
-      this.keyword = keyword;
-    }
-
     /**
      * Uses this instances {@link #keyword} to extract values form a
      * {@link Version} and possibly prepends the {@link #prefix}.
      */
     @Override
-    String format(final Version version) {
+    public String format(final Version version) {
       final String result = this.keyword.convert(version);
       if (result != null && this.prefix != null) {
         return this.prefix + result;
@@ -296,16 +285,8 @@ public final class VersionFormatter {
     INCREMENTAL(Version::getIncremental),
     FEATURE(e -> e.getBranch().isFeature() ? e.getBranch() : null),
     SNAPSHOT(e -> e.isSnapshot() ? "SNAPSHOT" : null),
-    TIMESTAMP(
-        e ->
-            e instanceof ConcreteSnapshotVersion
-                ? ((ConcreteSnapshotVersion) e).getTimestamp()
-                : null),
-    BUILDNUMBER(
-        e ->
-            e instanceof ConcreteSnapshotVersion
-                ? ((ConcreteSnapshotVersion) e).getBuildnumber()
-                : null),
+    TIMESTAMP(e -> e instanceof final ConcreteSnapshotVersion s ? s.getTimestamp() : null),
+    BUILDNUMBER(e -> e instanceof final ConcreteSnapshotVersion s ? s.getBuildnumber() : null),
     QUALIFIERS(e -> !e.getQualifiers().isEmpty() ? String.join("-", e.getQualifiers()) : null);
 
     private final transient Function<Version, ? extends Object> converter;
@@ -315,14 +296,11 @@ public final class VersionFormatter {
     }
 
     String convert(final Version version) {
-      final Object result = this.converter.apply(version);
-      if (result == null) {
-        return null;
-      }
-      if (result instanceof String) {
-        return (String) result;
-      }
-      return result.toString();
+      return switch (this.converter.apply(version)) {
+        case null -> null;
+        case String string -> string;
+        case Object object -> object.toString();
+      };
     }
 
     String parsePrefix(final String string) {

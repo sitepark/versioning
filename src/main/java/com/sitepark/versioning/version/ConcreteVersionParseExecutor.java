@@ -9,14 +9,11 @@ import java.text.ParseException;
  * {@link ReleaseVersion}s, depending on wether the last two {@code qualifiers}
  * are a {@code timestamp} of the format {@code yyyyMMdd.HHmmss} and a
  * {@code buildnumber}.
- * To be able to handle these two cases more elegantly they are wrapped in a
- * {@link PotentialSnapshotVersion} instance.
  *
  * <strong>Attention:</strong> this class is meant for a single execution and
  * therefore not thread safe!
  */
-class PotentialConcreteSnapshotParseExecutor
-    extends VersionParseExecutor<PotentialConcreteSnapshotVersion> {
+class ConcreteVersionParseExecutor extends VersionParseExecutor<ConcreteVersion> {
 
   /**
    * A field to store a potential timestamp-qualifier.
@@ -27,22 +24,31 @@ class PotentialConcreteSnapshotParseExecutor
   private String timestampQualifier = null;
 
   /**
+   * A field to store a buildnumber-qualifier.
+   * Buildnumbers have to be positive; {@code -1} signals absence.
+   * Is filled if valid {@link #timestampQualifier} and
+   * {@code buildnumberQualifier} are present, meaning that the {@link Version}
+   * beeing parsed is a {@link ConcreteSnapshotVersion}.
+   */
+  private int buildnumberQualifier = -1;
+
+  /**
    * Wether or not a potential timestamp-qualifier (stored in
-   * {@link #timestampQualifier} should be interpreted as the versions branch if
-   * found not to be part of a {@link ConcreteSnapshotVersion}.
+   * {@link #timestampQualifier}) should be interpreted as the versions branch
+   * if found not to be part of a {@link ConcreteSnapshotVersion}.
    */
   private boolean timestampQualifierWasBranch = true;
 
-  PotentialConcreteSnapshotParseExecutor(final String string, final byte flags) {
+  ConcreteVersionParseExecutor(final String string, final byte flags) {
     super(string, flags);
   }
 
   @Override
-  protected PotentialConcreteSnapshotVersion buildVersion() {
-    return this.versionBuilder.getConcreteSnapshotTimestamp().isPresent()
-            && this.versionBuilder.getConcreteSnapshotBuildnumber().isPresent()
-        ? PotentialConcreteSnapshotVersion.ofSnapshot(this.versionBuilder.buildConcreteSnapshot())
-        : PotentialConcreteSnapshotVersion.ofRelease(this.versionBuilder.buildRelease());
+  protected ConcreteVersion buildVersion() {
+    return this.buildnumberQualifier != -1
+        ? this.versionBuilder.buildConcreteSnapshot(
+            this.timestampQualifier, this.buildnumberQualifier)
+        : this.versionBuilder.buildRelease();
   }
 
   @Override
@@ -179,8 +185,7 @@ class PotentialConcreteSnapshotParseExecutor
 
   private void addTimestampBuildnumber() throws ParseException {
     try {
-      this.versionBuilder.setConcreteSnapshotTimestamp(this.timestampQualifier);
-      this.versionBuilder.setConcreteSnapshotBuildnumber(Integer.parseInt(this.currentItem));
+      this.buildnumberQualifier = Integer.parseInt(this.currentItem);
     } catch (final NumberFormatException exception) {
       this.fail();
     }

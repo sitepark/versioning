@@ -4,7 +4,7 @@
 
 	<groupId>com.sitepark</groupId>
 	<artifactId>versioning</artifactId>
-	<version>2.2.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Sitepark Versioning</name>
@@ -51,7 +51,7 @@
 		<gpg.skip>true</gpg.skip>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<file.encoding>UTF-8</file.encoding>
-		<maven.compiler.release>11</maven.compiler.release>
+		<maven.compiler.release>21</maven.compiler.release>
 	</properties>
 
 	<dependencies>

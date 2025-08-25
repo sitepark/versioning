@@ -20,9 +20,7 @@ package com.sitepark.versioning.version;
  *        .buildSnapshot();
  *    final ConcreteSnapshotVersion concreteSnapshot = new VersionBuilder()
  *        .setMajor(1)
- *        .setConcreteSnapshotTimestamp("12345678.123456")
- *        .setConcreteSnapshotBuildnumber(42)
- *        .buildConcreteSnapshot();
+ *        .buildConcreteSnapshot("12345678.123456", 42);
  *
  *    assert(concreteSnapshot.compareTo(snapshot) == 0);
  *    assert(snapshot.compareTo(concreteSnapshot) == 0);
@@ -34,7 +32,7 @@ package com.sitepark.versioning.version;
  * caused by/interpreted as a normal {@code qualifier} of a
  * {@link ReleaseVersion}.
  */
-public class SnapshotVersion extends AbstractVersion implements BaseVersion {
+public final class SnapshotVersion extends AbstractVersion implements BaseVersion {
   private static final long serialVersionUID = 5634960545752086851L;
 
   SnapshotVersion(final VersionBuilder builder) {

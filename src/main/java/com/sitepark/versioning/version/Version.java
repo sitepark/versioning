@@ -19,7 +19,8 @@ import java.util.List;
  * {@link VersionParser} like so:<br>
  * {@code <major>.<minor>.<incremental>-<branch>-<qualifiers>}
  */
-public interface Version extends Comparable<Version> {
+public sealed interface Version extends Comparable<Version>
+    permits AbstractVersion, BaseVersion, ConcreteVersion {
 
   /**
    * Returns the {@code major} version.
@@ -128,7 +129,6 @@ public interface Version extends Comparable<Version> {
    * @see ReleaseVersion#compareTo(Version)
    * @see SnapshotVersion#compareTo(Version)
    * @see ConcreteSnapshotVersion#compareTo(Version)
-   * @see DatedBaseVersion#compareTo(Version)
    */
   @Override
   public default int compareTo(final Version that) {

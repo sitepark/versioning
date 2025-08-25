@@ -2,9 +2,7 @@ package com.sitepark.versioning.version.specification;
 
 import com.sitepark.versioning.version.BaseVersion;
 import com.sitepark.versioning.version.VersionParser;
-import com.sitepark.versioning.version.specification.element.ExplicitVersionElement;
-import com.sitepark.versioning.version.specification.element.VersionRangeElement;
-import com.sitepark.versioning.version.specification.element.boundary.Boundaries;
+import com.sitepark.versioning.version.specification.element.ElementsIntersectException;
 import com.sitepark.versioning.version.specification.element.boundary.Boundary;
 import com.sitepark.versioning.version.specification.element.boundary.ExclusiveLowerBoundary;
 import com.sitepark.versioning.version.specification.element.boundary.ExclusiveUpperBoundary;
@@ -72,9 +70,8 @@ class VersionsSpecificationParseExecutor {
    *
    * @throws ParseException if the String is not compliant with the required
    *                        format
-   * @throws InvalidBoundariesException if a
-   *                    {@link VersionRangeElement}'s {@link Boundaries} are
-   *                    not valid
+   * @throws InvalidBoundariesException if the boundaries of a range are invalid
+   * @throws ElementsIntersectException if parsed elements intersect
    */
   public VersionsSpecification execute() throws ParseException, InvalidBoundariesException {
     if (this.maxIndex == -1) {
@@ -189,7 +186,17 @@ class VersionsSpecificationParseExecutor {
   }
 
   private void addVersionRange() throws ParseException, InvalidBoundariesException {
-    this.builder.addVersionRange(new VersionRangeElement(this.buildBoundaries()));
+    if (this.currentLowerVersionLength == 0) {
+      if (this.currentUpperVersionLength == 0) {
+        throw new InvalidBoundariesException(
+            "VersionRanges have to have atleast one limiting Boundary");
+      }
+      this.parseOnlyUpperBoundary();
+    } else if (this.currentUpperVersionLength == 0) {
+      this.parseOnlyLowerBoundary();
+    } else {
+      this.parseBothBoundaries();
+    }
   }
 
   private void addSingleVersion() throws ParseException {
@@ -197,10 +204,8 @@ class VersionsSpecificationParseExecutor {
       this.fail();
     }
     this.builder.addExplicitVersion(
-        new ExplicitVersionElement(
-            VersionsSpecificationParseExecutor.VERSION_PARSER
-                .parsePotentialSnapshot(this.currentLowerVersion)
-                .get()));
+        VersionsSpecificationParseExecutor.VERSION_PARSER.parseBaseVersion(
+            this.currentLowerVersion));
   }
 
   private void resetValues() {
@@ -216,54 +221,36 @@ class VersionsSpecificationParseExecutor {
     return new VersionsSpecification(this.builder);
   }
 
-  private Boundaries<?, ?> buildBoundaries() throws ParseException, InvalidBoundariesException {
-    if (this.currentLowerVersionLength == 0) {
-      if (this.currentUpperVersionLength == 0) {
-        throw new InvalidBoundariesException(
-            "VersionRanges have to have " + "atleast one limiting Boundary");
-      }
-      return this.parseOnlyUpperBoundary();
-    }
-    if (this.currentUpperVersionLength == 0) {
-      return this.parseOnlyLowerBoundary();
-    }
-    return this.parseBothBoundaries();
-  }
-
-  private Boundaries<?, ?> parseOnlyUpperBoundary() throws ParseException {
+  private void parseOnlyUpperBoundary() throws ParseException {
     final BaseVersion version =
-        VersionsSpecificationParseExecutor.VERSION_PARSER
-            .parsePotentialSnapshot(this.currentUpperVersion)
-            .get();
-    return new Boundaries<>(
+        VersionsSpecificationParseExecutor.VERSION_PARSER.parseBaseVersion(
+            this.currentUpperVersion);
+    this.builder.addVersionRange(
         new UnlimitedLowerBoundary(),
         this.currentRangeIsEndInclusive
             ? new InclusiveUpperBoundary(version)
             : new ExclusiveUpperBoundary(version));
   }
 
-  private Boundaries<?, ?> parseOnlyLowerBoundary() throws ParseException {
+  private void parseOnlyLowerBoundary() throws ParseException {
     final BaseVersion version =
-        VersionsSpecificationParseExecutor.VERSION_PARSER
-            .parsePotentialSnapshot(this.currentLowerVersion)
-            .get();
-    return new Boundaries<>(
+        VersionsSpecificationParseExecutor.VERSION_PARSER.parseBaseVersion(
+            this.currentLowerVersion);
+    this.builder.addVersionRange(
         this.currentRangeIsStartInclusive
             ? new InclusiveLowerBoundary(version)
             : new ExclusiveLowerBoundary(version),
         new UnlimitedUpperBoundary());
   }
 
-  private Boundaries<?, ?> parseBothBoundaries() throws ParseException {
+  private void parseBothBoundaries() throws ParseException {
     final BaseVersion lowerVersion =
-        VersionsSpecificationParseExecutor.VERSION_PARSER
-            .parsePotentialSnapshot(this.currentLowerVersion)
-            .get();
+        VersionsSpecificationParseExecutor.VERSION_PARSER.parseBaseVersion(
+            this.currentLowerVersion);
     final BaseVersion upperVersion =
-        VersionsSpecificationParseExecutor.VERSION_PARSER
-            .parsePotentialSnapshot(this.currentUpperVersion)
-            .get();
-    return new Boundaries<>(
+        VersionsSpecificationParseExecutor.VERSION_PARSER.parseBaseVersion(
+            this.currentUpperVersion);
+    this.builder.addVersionRange(
         this.currentRangeIsStartInclusive
             ? new InclusiveLowerBoundary(lowerVersion)
             : new ExclusiveLowerBoundary(lowerVersion),
