@@ -108,12 +108,12 @@ public sealed interface Version extends Comparable<Version>
    *     greater.
    *   </li>
    *   <li>
-   *     {@code branch} - {@link Branch}es are compared as described by
-   *     {@link  Branch#compareTo}.
-   *   </li>
-   *   <li>
    *     {@code snapshot status} - Release versions are considered greater
    *     than snapshot versions.
+   *   </li>
+   *   <li>
+   *     {@code branch} - {@link Branch}es are compared as described by
+   *     {@link  Branch#compareTo}.
    *   </li>
    *   <li>
    *     {@code qualifiers} - Qualifiers are compared lexicographically (in
@@ -132,32 +132,6 @@ public sealed interface Version extends Comparable<Version>
    */
   @Override
   public default int compareTo(final Version that) {
-    int cmp;
-    if ((cmp = this.getMajor() - that.getMajor()) != 0) {
-      return cmp;
-    }
-    if ((cmp = this.getMinor() - that.getMinor()) != 0) {
-      return cmp;
-    }
-    if ((cmp = this.getIncremental() - that.getIncremental()) != 0) {
-      return cmp;
-    }
-    if ((cmp = this.getBranch().compareTo(that.getBranch())) != 0) {
-      return cmp;
-    }
-    if ((cmp = (this.isSnapshot() ? -1 : 1) - (that.isSnapshot() ? -1 : 1))
-        != 0) { // Snapshot < Release
-      return cmp;
-    }
-    for (int i = 0; cmp == 0; i++) {
-      if (i == this.getQualifiers().size()) {
-        return i == that.getQualifiers().size() ? cmp : 1;
-      }
-      if (i == that.getQualifiers().size()) {
-        return -1; // more qualifiers => smaller value
-      }
-      cmp = this.getQualifiers().get(i).compareTo(that.getQualifiers().get(i));
-    }
-    return cmp;
+    return VersionComparator.NATUAL.compare(this, that);
   }
 }

@@ -100,9 +100,9 @@ public class VersionComparatorTest {
   public void testIgnoredBranches() {
     final List<Version> expected =
         List.of(
-            SNAPSHOT_3_0_0,
             SNAPSHOT_3_0_0_FEATURE_B_RC1,
             SNAPSHOT_3_0_0_FEATURE_A_RC2,
+            SNAPSHOT_3_0_0,
             RELEASE_3_0_0,
             RELEASE_3_0_0_FEATURE_A,
             SNAPSHOT_3_0_1,

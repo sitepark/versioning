@@ -247,10 +247,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
     if ((cmp = a.getMinor() - b.getMinor()) != 0) {
       return cmp;
     }
-    if ((cmp = a.getIncremental() - b.getIncremental()) != 0) {
-      return cmp;
-    }
-    return cmp;
+    return a.getIncremental() - b.getIncremental();
   }
 
   private static int compareBranch(final Version a, final Version b) {
@@ -266,10 +263,10 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
     int cmp = 0;
     for (int i = 0; cmp == 0; i++) {
       if (i == a.getQualifiers().size()) {
-        return i == b.getQualifiers().size() ? cmp : -1;
+        return i == b.getQualifiers().size() ? cmp : 1;
       }
       if (i == b.getQualifiers().size()) {
-        return 1; // more qualifiers => larger value
+        return -1; // more qualifiers => smaller value
       }
       cmp = a.getQualifiers().get(i).compareTo(b.getQualifiers().get(i));
     }

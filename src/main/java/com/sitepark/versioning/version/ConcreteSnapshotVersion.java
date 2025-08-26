@@ -94,18 +94,6 @@ public final class ConcreteSnapshotVersion extends AbstractVersion implements Co
   }
 
   @Override
-  public int compareTo(final Version other) {
-    int cmp = super.compareTo(other);
-    if (cmp == 0 && other instanceof final ConcreteSnapshotVersion that) {
-      if ((cmp = this.timestamp.compareTo(that.timestamp)) != 0) {
-        return cmp;
-      }
-      return this.buildnumber - that.buildnumber;
-    }
-    return cmp;
-  }
-
-  @Override
   public BaseVersion asBaseVersion() {
     return new SnapshotVersion(this);
   }
