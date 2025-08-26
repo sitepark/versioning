@@ -14,8 +14,8 @@ import java.util.Comparator;
 public interface VersionComparator<T extends Version> extends Comparator<T>, Serializable {
 
   /**
-   * A {@link Comparator} with natual ordering that respects all aspects of the
-   * {@link Version}s given.
+   * A {@link Comparator} with natual ordering (ascending) that respects all
+   * aspects of the {@link Version}s given.
    */
   public static final VersionComparator<Version> NATUAL =
       (a, b) -> {
@@ -23,21 +23,21 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
         if ((cmp = VersionComparator.compareNumbers(a, b)) != 0) {
           return cmp;
         }
-        if ((cmp = VersionComparator.compareBranch(a, b)) != 0) {
+        if ((cmp = VersionComparator.compareSnapshots(a, b)) != 0) {
           return cmp;
         }
-        if ((cmp = VersionComparator.compareSnapshots(a, b)) != 0) {
+        if ((cmp = VersionComparator.compareBranch(a, b)) != 0) {
           return cmp;
         }
         if ((cmp = VersionComparator.compareQualifiers(a, b)) != 0) {
           return cmp;
         }
-        return VersionComparator.compareSnapshots(a, b);
+        return VersionComparator.compareConcreteSnapshots(a, b);
       };
 
   /**
-   * A {@link Comparator} with reversed ordering that respects all aspects of
-   * the {@link Version}s given.
+   * A {@link Comparator} with reversed ordering (descending) that respects all
+   * aspects of the {@link Version}s given.
    */
   public static final VersionComparator<Version> REVERSED =
       (a, b) -> {
@@ -45,16 +45,16 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
         if ((cmp = VersionComparator.compareNumbers(a, b)) != 0) {
           return cmp * -1;
         }
-        if ((cmp = VersionComparator.compareBranch(a, b)) != 0) {
+        if ((cmp = VersionComparator.compareSnapshots(a, b)) != 0) {
           return cmp * -1;
         }
-        if ((cmp = VersionComparator.compareSnapshots(a, b)) != 0) {
+        if ((cmp = VersionComparator.compareBranch(a, b)) != 0) {
           return cmp * -1;
         }
         if ((cmp = VersionComparator.compareQualifiers(a, b)) != 0) {
           return cmp * -1;
         }
-        return VersionComparator.compareSnapshots(a, b) * -1;
+        return VersionComparator.compareConcreteSnapshots(a, b) * -1;
       };
 
   /**
@@ -77,7 +77,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
     private Builder() {
       /* the default {@code 0} means to not ignore anything and compare in
        * natual order */
-      this.instruction = 0x0000;
+      this.instruction = 0b0000;
     }
 
     /**
@@ -86,7 +86,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
      * @return itself
      */
     public Builder reverse() {
-      this.instruction |= 0x0001;
+      this.instruction |= 0b0001;
       return this;
     }
 
@@ -96,7 +96,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
      * @return itself
      */
     public Builder ignoreBranches() {
-      this.instruction |= 0x0010;
+      this.instruction |= 0b0010;
       return this;
     }
 
@@ -106,7 +106,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
      * @return itself
      */
     public Builder ignoreQualifiers() {
-      this.instruction |= 0x0100;
+      this.instruction |= 0b0100;
       return this;
     }
 
@@ -117,7 +117,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
      * @return itself
      */
     public Builder ignoreConcreteSnapshots() {
-      this.instruction |= 0x1000;
+      this.instruction |= 0b1000;
       return this;
     }
 
@@ -148,7 +148,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
               if ((cmp = VersionComparator.compareQualifiers(a, b)) != 0) {
                 return cmp * direction;
               }
-              return VersionComparator.compareSnapshots(a, b) * direction;
+              return VersionComparator.compareConcreteSnapshots(a, b) * direction;
             };
           // exclude qualifiers
         case 2 ->
@@ -157,13 +157,13 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
               if ((cmp = VersionComparator.compareNumbers(a, b)) != 0) {
                 return cmp * direction;
               }
-              if ((cmp = VersionComparator.compareBranch(a, b)) != 0) {
-                return cmp * direction;
-              }
               if ((cmp = VersionComparator.compareSnapshots(a, b)) != 0) {
                 return cmp * direction;
               }
-              return VersionComparator.compareSnapshots(a, b) * direction;
+              if ((cmp = VersionComparator.compareBranch(a, b)) != 0) {
+                return cmp * direction;
+              }
+              return VersionComparator.compareConcreteSnapshots(a, b) * direction;
             };
           // exclude branches and qualifiers
         case 3 ->
@@ -175,7 +175,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
               if ((cmp = VersionComparator.compareSnapshots(a, b)) != 0) {
                 return cmp * direction;
               }
-              return VersionComparator.compareSnapshots(a, b) * direction;
+              return VersionComparator.compareConcreteSnapshots(a, b) * direction;
             };
           // exclude concrete snapshots
         case 4 ->
@@ -184,10 +184,10 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
               if ((cmp = VersionComparator.compareNumbers(a, b)) != 0) {
                 return cmp * direction;
               }
-              if ((cmp = VersionComparator.compareBranch(a, b)) != 0) {
+              if ((cmp = VersionComparator.compareSnapshots(a, b)) != 0) {
                 return cmp * direction;
               }
-              if ((cmp = VersionComparator.compareSnapshots(a, b)) != 0) {
+              if ((cmp = VersionComparator.compareBranch(a, b)) != 0) {
                 return cmp * direction;
               }
               return VersionComparator.compareQualifiers(a, b) * direction;
@@ -211,10 +211,10 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
               if ((cmp = VersionComparator.compareNumbers(a, b)) != 0) {
                 return cmp * direction;
               }
-              if ((cmp = VersionComparator.compareBranch(a, b)) != 0) {
+              if ((cmp = VersionComparator.compareSnapshots(a, b)) != 0) {
                 return cmp * direction;
               }
-              return VersionComparator.compareSnapshots(a, b) * direction;
+              return VersionComparator.compareBranch(a, b) * direction;
             };
           // exclude branches, qualifiers and concrete snapshots
         case 7 ->
@@ -223,7 +223,8 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
               return (cmp == 0 ? VersionComparator.compareSnapshots(a, b) : cmp) * direction;
             };
           // something went wrong
-        default -> throw new RuntimeException("illegal internal state (" + this.instruction + ")");
+        default ->
+            throw new IllegalStateException("illegal internal state (" + this.instruction + ")");
       };
     }
   }
@@ -265,10 +266,10 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
     int cmp = 0;
     for (int i = 0; cmp == 0; i++) {
       if (i == a.getQualifiers().size()) {
-        return i == b.getQualifiers().size() ? cmp : 1;
+        return i == b.getQualifiers().size() ? cmp : -1;
       }
       if (i == b.getQualifiers().size()) {
-        return -1; // more qualifiers => smaller value
+        return 1; // more qualifiers => larger value
       }
       cmp = a.getQualifiers().get(i).compareTo(b.getQualifiers().get(i));
     }
