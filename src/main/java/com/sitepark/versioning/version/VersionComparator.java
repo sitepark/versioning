@@ -58,6 +58,13 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
       };
 
   /**
+   * A {@link Comparator} with natual ordering (ascending) that respects all
+   * aspects of the {@link Version}s given except {@link Branch}es.
+   */
+  public static final VersionComparator<Version> IGNORING_BRANCHES =
+      VersionComparator.builder().ignoreBranches().build();
+
+  /**
    * A builder to create individual {@link VersionComparator} instances.
    *
    * This should be used when intending to ignore certain aspects of the

@@ -19,7 +19,6 @@ import java.util.Optional;
  * {@code Branch} it may not be considered contained by the
  * {@link SpecificationElement} instance.
  *
- * @see #containsVersion(Version)
  * @see ExplicitVersionElement
  * @see VersionRangeElement
  */
@@ -97,25 +96,9 @@ public sealed interface SpecificationElement extends Serializable
    * Returns the {@link Branch} this {@link SpecificationElement} is limited
    * to.
    *
-   * Only {@link Version}s with a equal {@code Branch} may be considered
-   * contained by this instance.
-   *
    * @return the {@code Branch} of this instance
-   * @see #containsVersion(Version)
    */
   public abstract Branch getBranch();
-
-  /**
-   * Returns wether a {@link Version} is contained in the subset represented
-   * by this instance.
-   *
-   * Only {@link Version}s with a equal {@code Branch} may be considered
-   * contained.
-   *
-   * @param version the {@code Version} to check
-   * @return {@code true} if the {@code Version} is contained in this instance
-   */
-  public abstract boolean containsVersion(Version version);
 
   /**
    * Calculates an intersection between this {@link SpecificationElement} and

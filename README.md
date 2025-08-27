@@ -41,41 +41,41 @@ version class diagram
 ---
 %%{init: {'theme': 'dark'}}%%
 classDiagram
-	Version <|-- BaseVersion : extends
-	Version <|-- ConcreteVersion : extends
-	BaseVersion <|-- SnapshotVersion : implements
-	BaseVersion <|-- ReleaseVersion : implements
-	ConcreteVersion <|-- ReleaseVersion : implements
-	ConcreteVersion <|-- ConcreteSnapshotVersion : implements
-	class Version {
-		<<interface>>
-		int getMajor()
-		int getMinor()
-		int getIncremental()
-		Branch getBranch()
-		List&lt;String&gt; getQualifierList()
-		boolean isRelease()
-		boolean isSnapshot()
-	}
-	class BaseVersion {
-		<<interface>>
-	}
-	class ConcreteVersion {
-		<<interface>>
-		BaseVersion asBaseVersion()
-	}
-	class SnapshotVersion {
-		ReleaseVersion toRelease()
-	}
-	class ReleaseVersion {
-		SnapshotVersion toSnapshot()
-	}
-	class ConcreteSnapshotVersion {
-		String getTimestamp()
-		int getBuildnumber()
-		ReleaseVersion toRelease()
-		SnapshotVersion toSnapshot()
-	}
+    Version <|-- BaseVersion : extends
+    Version <|-- ConcreteVersion : extends
+    BaseVersion <|-- SnapshotVersion : implements
+    BaseVersion <|-- ReleaseVersion : implements
+    ConcreteVersion <|-- ReleaseVersion : implements
+    ConcreteVersion <|-- ConcreteSnapshotVersion : implements
+    class Version {
+        <<interface>>
+        int getMajor()
+        int getMinor()
+        int getIncremental()
+        Branch getBranch()
+        List&lt;String&gt; getQualifierList()
+        boolean isRelease()
+        boolean isSnapshot()
+    }
+    class BaseVersion {
+        <<interface>>
+    }
+    class ConcreteVersion {
+        <<interface>>
+        BaseVersion asBaseVersion()
+    }
+    class SnapshotVersion {
+        ReleaseVersion toRelease()
+    }
+    class ReleaseVersion {
+        SnapshotVersion toSnapshot()
+    }
+    class ConcreteSnapshotVersion {
+        String getTimestamp()
+        int getBuildnumber()
+        ReleaseVersion toRelease()
+        SnapshotVersion toSnapshot()
+    }
 ```
 
 #### Ordering
@@ -84,11 +84,30 @@ Version comparisons are carried out in the following order of precedence until o
 1. `major` - Higher major versions are considered greater.
 2. `minor` - Higher minor versions are considered greater.
 3. `incremental` - Higher incremental versions are considered greater.
-4. `branch` - Versions with a `Branch.DEVELOP` are considered greater, others are compared lexicographically.
 5. `snapshot status` - Release versions are considered greater than snapshot versions.
+4. `branch` - Versions with a `Branch.DEVELOP` are considered greater, others are compared lexicographically.
 6. `qualifiers` - Qualifiers are compared lexicographically (in order).  A version with fewer qualifiers is considered greater.
 7. `concrete snapshot timestamp` - If both Versions are ConcreteSnapshotVersions their `timestamp`s are compared _lexicographically_ (**not numerically!**  The result for the expected format `yyyyMMdd.HHmmss` is the same, but this is not enforced)
 8. `concrete snapshot buildnumber` - If both Versions are ConcreteSnapshotVersions the one with the higher `buildnumber` is considered greater.
+
+This behaviour is implemented by the `VersionComparator.NATUAL` (which is used by the also `compareTo` methods) -  It can however be modified by using an alternative `VersionComparator`:
+
+```java
+final var ascending = versions.stream()
+  .sorted(VersionComparator.NATUAL)
+  .toList();
+
+final var descending = versions.stream()
+  .sorted(VersionComparator.REVERSED)
+  .toList();
+
+final var custom = versions.stream()
+  .sorted(VersionComparator.builder()
+    .ignoreBranches()
+    .ignoreQualifiers()
+    .build())
+  .toList();
+```
 
 This concludes the following statements:
 ```
@@ -109,11 +128,11 @@ Otherwise it can be configured with `VersionParser.Characteristics` with these v
 ```java
 final VersionParser parser = new VersionParser(
 
-		// do not set branches (they default to Branch.DEVELOP)
-		VersionParser.Characteristics.IGNORE_BRANCHES,
+    // do not set branches (they default to Branch.DEVELOP)
+    VersionParser.Characteristics.IGNORE_BRANCHES,
 
-		// do not set any qualifiers
-		VersionParser.Characteristics.IGNORE_QUALIFIERS);
+    // do not set any qualifiers
+    VersionParser.Characteristics.IGNORE_QUALIFIERS);
 ```
 
 Generally, a `String` to be parsed into a `Version` has to follow the following format or cause a `ParseException`:
@@ -221,11 +240,11 @@ As an example, a `Repository` class may contain a method to query certain versio
 ```java
 public class Repository {
 
-	public List<BaseVersion> queryVersions(final VersionTypes types) {
-		// ...
-	}
+  public List<BaseVersion> queryVersions(final VersionTypes types) {
+    // ...
+  }
 
-	// ...
+  // ...
 }
 ```
 
@@ -233,12 +252,12 @@ which then can be used like this to retrieve only the desired versions:
 
 ```java
 final List<BaseVersion> developReleases = repository.queryVersions(
-		new VersionTypes(
-				VersionTypes.PublicationStatusType.RELEASES,
-				VersionTypes.BranchType.DEVELOP));
+    new VersionTypes(
+        VersionTypes.PublicationStatusType.RELEASES,
+        VersionTypes.BranchType.DEVELOP));
 
 final List<BaseVersion> developSnapshots = repository.queryVersions(
-		VersionTypes.ONLY_DEVELOP_SNAPSHOTS);
+    VersionTypes.ONLY_DEVELOP_SNAPSHOTS);
 
 final List<BaseVersion> all = repository.queryVersions(VersionTypes.ALL);
 
@@ -281,11 +300,25 @@ Here are some examples for valid `VersionsSpecification`s:
 | \[1.0-feature, 2.0-feature) | __1.0 <= x < 2.0 of the branch "feature"__ |
 | (, 1.2), 1.2-feature        | __x < 1.2.0 or 1.2.0-feature__             |
 
+The following options are provided to check, wether a `Version` complies with a `VersionsSpecification`:
+
+```java
+final boolean complies = specification.containsVersion(version);
+
+final boolean complies = VersionsSpecificationChecker.IGNORING_BRANCHES.check(
+  version,
+  specification);
+
+final VersionsSpecificationChecker myCustomChecker
+  = (version, specification) -> this.doSomeCustomChecking(version, specification);
+final boolean complies = myCustomChecker.check(version, specification);
+```
+
 ## Development
 
 You will need:
-- Java 11 or higher
-- Maven 3 or higher
+- Java 21
+- Maven 3.9
 
 Check this repository out
 ```sh

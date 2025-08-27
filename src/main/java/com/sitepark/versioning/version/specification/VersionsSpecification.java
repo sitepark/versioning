@@ -30,6 +30,7 @@ import java.util.Optional;
  * @see #containsVersion(Version)
  * @see VersionsSpecificationParser
  * @see VersionsSpecificationBuilder
+ * @see VersionsSpecificationChecker
  */
 public final class VersionsSpecification implements Serializable {
   private static final long serialVersionUID = 6549872561421500098L;
@@ -49,6 +50,15 @@ public final class VersionsSpecification implements Serializable {
   }
 
   /**
+   * Returns the {@link SpecificationElement}s defining this specification.
+   *
+   * @return all elements of this instance
+   */
+  public UnmodifiableSortedElementBranchSet getElements() {
+    return this.elements;
+  }
+
+  /**
    * Returns wether a {@link Version} is contained inside this instance.
    *
    * This is the case if any of this instances {@link SpecificationElement}s
@@ -59,10 +69,10 @@ public final class VersionsSpecification implements Serializable {
    * @param version the {@code Version} to check
    * @return {@code true} if the {@code Version} is compliant with this
    *         instance, {@code false} otherwise
-   * @see SpecificationElement#containsVersion(Version)
+   * @see VersionsSpecificationChecker#check(Version, VersionsSpecification)
    */
   public boolean containsVersion(final Version version) {
-    return this.elements.containsVersion(version);
+    return VersionsSpecificationChecker.DEFAULT.check(version, this);
   }
 
   /**

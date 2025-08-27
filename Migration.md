@@ -119,3 +119,10 @@ final ConcreteSnapshotVersion version = new VersionBuilder()
 These interfaces are now `sealed` and can thus no longer be implemented by
 other classes.
 
+## `SpecificationElement` and by extension `ExplicitVersionElement` no longer define `containsVersion(Version)`
+
+This method was used internally to check, wether a `Version` complies with the
+element. The way to determine this now is the new
+`VersionsSpecificationComparator`, an individual element may no longer be
+checked.
+

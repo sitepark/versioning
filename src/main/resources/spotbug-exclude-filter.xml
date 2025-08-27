@@ -13,8 +13,8 @@
 	</Match>
 
 	<Match>
-		<Class name="com.sitepark.versioning.version.specification.element.boundary.Boundary"/>
-		<Method name="compareTo" parameter="Boundary"/>
-		<Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+		<Class name="com.sitepark.versioning.version.specification.VersionsSpecification"/>
+		<Method name="getElements"/>
+		<Bug pattern="EI_EXPOSE_REP"/>
 	</Match>
 </FindBugsFilter>

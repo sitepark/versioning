@@ -107,7 +107,6 @@ public final class VersionRangeElement implements SpecificationElement {
    * @param version the {@code Version} to check
    * @return {@code true} if the {@code Version} is contained in this instance
    */
-  @Override
   public boolean containsVersion(final Version version) {
     return this.branch.equals(version.getBranch())
         && this.lower.includesVersion(version)

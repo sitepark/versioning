@@ -46,23 +46,6 @@ public final class ExplicitVersionElement implements SpecificationElement {
     return this.version.getBranch();
   }
 
-  /**
-   * Returns wether a {@link Version} is contained in the subset represented
-   * by this instance.
-   *
-   * More formally, returns {@code true} if a {@code Version} is specified,
-   * such that
-   * {@code explicitVersionElement.getVersion().compareTo(version) == 0}.
-   *
-   * @param version the {@code Version} to check
-   * @return {@code true} if the {@code Version} is contained in this instance
-   */
-  @Override
-  public boolean containsVersion(final Version version) {
-    // compareTo to allow supplying ConcreteSnapshotVersions
-    return this.version.compareTo(version) == 0;
-  }
-
   @Override
   public Optional<SpecificationElement> getIntersection(final SpecificationElement element) {
     return switch (element) {
