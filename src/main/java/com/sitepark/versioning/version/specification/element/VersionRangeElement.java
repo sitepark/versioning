@@ -1,10 +1,13 @@
 package com.sitepark.versioning.version.specification.element;
 
 import com.sitepark.versioning.Branch;
+import com.sitepark.versioning.version.BaseVersion;
 import com.sitepark.versioning.version.Version;
 import com.sitepark.versioning.version.specification.VersionsSpecification;
-import com.sitepark.versioning.version.specification.element.boundary.Boundaries;
 import com.sitepark.versioning.version.specification.element.boundary.Boundary;
+import com.sitepark.versioning.version.specification.element.boundary.InvalidBoundariesException;
+import com.sitepark.versioning.version.specification.element.boundary.UnlimitedLowerBoundary;
+import com.sitepark.versioning.version.specification.element.boundary.UnlimitedUpperBoundary;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,21 +27,73 @@ import java.util.Optional;
  * {@code Version}s to.  If a {@code Version} does not have an equal
  * {@code Branch} it may not be considered contained by the
  * {@link VersionRangeElement}.
- *
- * @see Boundaries
  */
-public final class VersionRangeElement extends SpecificationElement.BoundariesBased {
+public final class VersionRangeElement implements SpecificationElement {
   private static final long serialVersionUID = -6318393237749829323L;
 
-  private final Boundaries<?, ?> boundaries;
+  private final Boundary.Lower lower;
+  private final Boundary.Upper upper;
+  private final Branch branch;
 
   /**
-   * Class constructor specifiying the {@link Boundaries} of this instance.
+   * Class Constructor specifying the {@link Boundary.Lower} and
+   * {@link Boundary.Upper} instances to define a subset of {@link Version}s.
    *
-   * @param boundaries the {@code Boundaries} of this instance
+   * @param lower the lower {@code Boundary}
+   * @param upper the upper {@code Boundary}
+   * @throws InvalidBoundariesException if the lower {@code Boundary} is
+   *                                    considered larger than the upper
+   *                                    {@code Boundary}, both are
+   *                                    {@link UnlimitedLowerBoundary} and
+   *                                    {@link UnlimitedUpperBoundary} instances
+   *                                    or both are based on
+   *                                    {@link BaseVersion}s with different
+   *                                    {@link Branch}es.
    */
-  public VersionRangeElement(final Boundaries<?, ?> boundaries) {
-    this.boundaries = Objects.requireNonNull(boundaries);
+  public VersionRangeElement(final Boundary.Lower lower, final Boundary.Upper upper) {
+    this.lower = Objects.requireNonNull(lower);
+    this.upper = Objects.requireNonNull(upper);
+    if (!(this.lower instanceof final Boundary.WithVersion lowerWithVersion)) {
+      if (!(this.upper instanceof final Boundary.WithVersion upperWithVersion)) {
+        throw new InvalidBoundariesException("atleast one Boundary has to be limited");
+      }
+      this.branch = upperWithVersion.getVersion().getBranch();
+    } else {
+      this.branch = lowerWithVersion.getVersion().getBranch();
+      if (this.upper instanceof final Boundary.WithVersion upperWithVersion) {
+        if (this.lower.compareTo(this.upper) >= 0) {
+          throw new InvalidBoundariesException(
+              "the lower Boundary has to be smaller than the upper Boundary");
+        }
+        if (!Objects.equals(
+            upperWithVersion.getVersion().getBranch(), lowerWithVersion.getVersion().getBranch())) {
+          throw new InvalidBoundariesException("boundaries cannot have different branches");
+        }
+      }
+    }
+  }
+
+  /**
+   * Returns the {@link Boundary.Lower Lower} {@link Boundary} of this range.
+   *
+   * @return the boundary
+   */
+  public Boundary.Lower getLowerBoundary() {
+    return this.lower;
+  }
+
+  /**
+   * Returns the {@link Boundary.Upper Upper} {@link Boundary} of this range.
+   *
+   * @return the boundary
+   */
+  public Boundary.Upper getUpperBoundary() {
+    return this.upper;
+  }
+
+  @Override
+  public Branch getBranch() {
+    return this.branch;
   }
 
   /**
@@ -52,97 +107,115 @@ public final class VersionRangeElement extends SpecificationElement.BoundariesBa
    * @param version the {@code Version} to check
    * @return {@code true} if the {@code Version} is contained in this instance
    */
-  @Override
   public boolean containsVersion(final Version version) {
-    return this.boundaries.containsVersion(version);
+    return this.branch.equals(version.getBranch())
+        && this.lower.includesVersion(version)
+        && this.upper.includesVersion(version);
   }
 
   @Override
-  public Boundaries<?, ?> getBoundaries() {
-    return this.boundaries;
-  }
-
-  @Override
-  public Optional<SpecificationElement> getIntersectionWithVersionBased(
-      final SpecificationElement.VersionBased other) {
-    return this.boundaries.containsVersion(other.getVersion())
-        ? Optional.of(other)
-        : Optional.empty();
-  }
-
-  @Override
-  public Optional<SpecificationElement> getIntersectionWithBoundariesBased(
-      final SpecificationElement.BoundariesBased other) {
-    return this.boundaries.getIntersection(other.getBoundaries()).map(VersionRangeElement::new);
-  }
-
-  @Override
-  public ComparisonResult compareToVersionBased(final SpecificationElement.VersionBased other) {
-    final int cmpLower = this.boundaries.getLower().compareTo(other.getVersion());
-    if (cmpLower > 0) {
-      return ComparisonResult.HIGHER;
-    }
-    final int cmpUpper = this.boundaries.getUpper().compareTo(other.getVersion());
-    if (cmpUpper < 0) {
-      return ComparisonResult.LOWER;
-    }
-    return cmpLower == 0 && cmpUpper == 0
-        ? ComparisonResult.INTERSECTS_EQUALY
-        : ComparisonResult.INTERSECTS_COMPLETELY;
-  }
-
-  @Override
-  public ComparisonResult compareToBoundariesBased(
-      final SpecificationElement.BoundariesBased other) {
-    int cmp = this.boundaries.getLower().compareTo(other.getBoundaries().getLower());
-    if (cmp > 0) {
-      if (this.boundaries.getLower().compareTo(other.getBoundaries().getUpper()) > 0) {
-        return ComparisonResult.HIGHER;
+  public Optional<SpecificationElement> getIntersection(final SpecificationElement element) {
+    return switch (element) {
+      case ExplicitVersionElement version ->
+          this.containsVersion(version.getVersion()) ? Optional.of(version) : Optional.empty();
+      case VersionRangeElement range -> {
+        final int lowerCmp = this.lower.compareTo(range.lower);
+        final int upperCmp = this.upper.compareTo(range.upper);
+        if (lowerCmp <= 0 && upperCmp >= 0) {
+          yield Optional.of(range);
+        }
+        if (lowerCmp >= 0 && upperCmp <= 0) {
+          yield Optional.of(this);
+        }
+        try {
+          yield Optional.of(
+              new VersionRangeElement(
+                  lowerCmp < 0 ? range.lower : this.lower,
+                  upperCmp > 0 ? range.upper : this.upper));
+        } catch (final InvalidBoundariesException exception) {
+          yield Optional.empty();
+        }
       }
-      if (this.boundaries.getUpper().compareTo(other.getBoundaries().getUpper()) > 0) {
-        return ComparisonResult.INTERSECTS_HIGHER;
-      }
-      return ComparisonResult.INTERSECTS_PARTIALLY;
-    }
-    if (cmp < 0) {
-      if (this.boundaries.getUpper().compareTo(other.getBoundaries().getLower()) < 0) {
-        return ComparisonResult.LOWER;
-      }
-      if (this.boundaries.getUpper().compareTo(other.getBoundaries().getUpper()) < 0) {
-        return ComparisonResult.INTERSECTS_LOWER;
-      }
-      return ComparisonResult.INTERSECTS_COMPLETELY;
-    }
-    cmp = this.boundaries.getUpper().compareTo(other.getBoundaries().getUpper());
-    if (cmp > 0) {
-      return ComparisonResult.INTERSECTS_COMPLETELY;
-    }
-    if (cmp < 0) {
-      return ComparisonResult.INTERSECTS_PARTIALLY;
-    }
-    return ComparisonResult.INTERSECTS_EQUALY;
+    };
   }
 
   @Override
-  public Branch getBranch() {
-    return this.boundaries.getBranch();
+  public final ComparisonResult compareTo(final SpecificationElement element) {
+    return switch (element) {
+      case ExplicitVersionElement version -> {
+        final int cmpLower = this.lower.compareTo(version.getVersion());
+        if (cmpLower > 0) {
+          yield ComparisonResult.HIGHER;
+        }
+        final int cmpUpper = this.upper.compareTo(version.getVersion());
+        if (cmpUpper < 0) {
+          yield ComparisonResult.LOWER;
+        }
+        yield cmpLower == 0 && cmpUpper == 0
+            ? ComparisonResult.INTERSECTS_EQUALY
+            : ComparisonResult.INTERSECTS_COMPLETELY;
+      }
+      case VersionRangeElement range -> {
+        int cmp = this.lower.compareTo(range.lower);
+        if (cmp > 0) {
+          if (this.lower.compareTo(range.upper) > 0) {
+            yield ComparisonResult.HIGHER;
+          }
+          if (this.upper.compareTo(range.upper) > 0) {
+            yield ComparisonResult.INTERSECTS_HIGHER;
+          }
+          yield ComparisonResult.INTERSECTS_PARTIALLY;
+        }
+        if (cmp < 0) {
+          if (this.upper.compareTo(range.lower) < 0) {
+            yield ComparisonResult.LOWER;
+          }
+          if (this.upper.compareTo(range.upper) < 0) {
+            yield ComparisonResult.INTERSECTS_LOWER;
+          }
+          yield ComparisonResult.INTERSECTS_COMPLETELY;
+        }
+        cmp = this.upper.compareTo(range.upper);
+        if (cmp > 0) {
+          yield ComparisonResult.INTERSECTS_COMPLETELY;
+        }
+        if (cmp < 0) {
+          yield ComparisonResult.INTERSECTS_PARTIALLY;
+        }
+        yield ComparisonResult.INTERSECTS_EQUALY;
+      }
+    };
   }
 
+  /**
+   * Returns a String representation of this instance.
+   *
+   * The resulting String are the {@link Boundary.Lower} and
+   * {@link Boundary.Upper} instances separated by a comma ({@code ,}).
+   *
+   * <p>
+   * Examples may look like this:<br>
+   * {@code [1.0.0,1.5.0)}<br>
+   * {@code (1.0.0,1.5.0]}<br>
+   * {@code (1.0.0,)}<br>
+   * {@code (,1.5.0)}
+   *
+   * @return a descriptive String of this instance
+   */
   @Override
   public String toString() {
-    return this.boundaries.toString();
+    return this.lower.toString() + "," + this.upper.toString();
   }
 
   @Override
   public int hashCode() {
-    return this.boundaries.hashCode();
+    return Objects.hash(this.upper, this.lower);
   }
 
   @Override
   public boolean equals(final Object other) {
-    if (!(other instanceof VersionRangeElement)) {
-      return false;
-    }
-    return this.boundaries.equals(((VersionRangeElement) other).boundaries);
+    return other instanceof final VersionRangeElement that
+        && this.upper.equals(that.upper)
+        && this.lower.equals(that.lower);
   }
 }

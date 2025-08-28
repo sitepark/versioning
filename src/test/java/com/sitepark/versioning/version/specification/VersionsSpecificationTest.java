@@ -4,9 +4,6 @@ import com.sitepark.versioning.Branch;
 import com.sitepark.versioning.version.BaseVersion;
 import com.sitepark.versioning.version.VersionBuilder;
 import com.sitepark.versioning.version.specification.element.ElementsIntersectException;
-import com.sitepark.versioning.version.specification.element.ExplicitVersionElement;
-import com.sitepark.versioning.version.specification.element.VersionRangeElement;
-import com.sitepark.versioning.version.specification.element.boundary.Boundaries;
 import com.sitepark.versioning.version.specification.element.boundary.ExclusiveLowerBoundary;
 import com.sitepark.versioning.version.specification.element.boundary.ExclusiveUpperBoundary;
 import com.sitepark.versioning.version.specification.element.boundary.InclusiveLowerBoundary;
@@ -38,16 +35,10 @@ public class VersionsSpecificationTest {
     final String result =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new UnlimitedLowerBoundary(),
-                        new ExclusiveUpperBoundary(this.onePointTwo))))
-            .addExplicitVersion(new ExplicitVersionElement(this.onePointTwoBranch))
+                new UnlimitedLowerBoundary(), new ExclusiveUpperBoundary(this.onePointTwo))
+            .addExplicitVersion(this.onePointTwoBranch)
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new ExclusiveLowerBoundary(this.onePointTwo),
-                        new UnlimitedUpperBoundary())))
+                new ExclusiveLowerBoundary(this.onePointTwo), new UnlimitedUpperBoundary())
             .build()
             .toString();
     Assertions.assertEquals("1.2.0-feature,(,1.2.0),(1.2.0,)", result);
@@ -58,10 +49,7 @@ public class VersionsSpecificationTest {
     final VersionsSpecification specification =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new UnlimitedLowerBoundary(),
-                        new InclusiveUpperBoundary(this.onePointTwo))))
+                new UnlimitedLowerBoundary(), new InclusiveUpperBoundary(this.onePointTwo))
             .build();
     Assertions.assertTrue(specification.containsVersion(this.onePointTwo));
     Assertions.assertFalse(specification.containsVersion(this.onePointTwoBranch));
@@ -74,10 +62,7 @@ public class VersionsSpecificationTest {
     final VersionsSpecification specification =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new UnlimitedLowerBoundary(),
-                        new ExclusiveUpperBoundary(this.onePointTwo))))
+                new UnlimitedLowerBoundary(), new ExclusiveUpperBoundary(this.onePointTwo))
             .build();
     Assertions.assertFalse(specification.containsVersion(this.onePointTwo));
     Assertions.assertFalse(specification.containsVersion(this.onePointTwoBranch));
@@ -90,10 +75,7 @@ public class VersionsSpecificationTest {
     final VersionsSpecification specification =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new InclusiveLowerBoundary(this.onePointTwo),
-                        new UnlimitedUpperBoundary())))
+                new InclusiveLowerBoundary(this.onePointTwo), new UnlimitedUpperBoundary())
             .build();
     Assertions.assertTrue(specification.containsVersion(this.onePointTwo));
     Assertions.assertFalse(specification.containsVersion(this.onePointTwoBranch));
@@ -106,10 +88,7 @@ public class VersionsSpecificationTest {
     final VersionsSpecification specification =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new ExclusiveLowerBoundary(this.onePointTwo),
-                        new UnlimitedUpperBoundary())))
+                new ExclusiveLowerBoundary(this.onePointTwo), new UnlimitedUpperBoundary())
             .build();
     Assertions.assertFalse(specification.containsVersion(this.onePointTwo));
     Assertions.assertFalse(specification.containsVersion(this.onePointTwoBranch));
@@ -122,15 +101,9 @@ public class VersionsSpecificationTest {
     final VersionsSpecification specification =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new UnlimitedLowerBoundary(),
-                        new ExclusiveUpperBoundary(this.onePointTwo))))
+                new UnlimitedLowerBoundary(), new ExclusiveUpperBoundary(this.onePointTwo))
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new ExclusiveLowerBoundary(this.onePointTwo),
-                        new UnlimitedUpperBoundary())))
+                new ExclusiveLowerBoundary(this.onePointTwo), new UnlimitedUpperBoundary())
             .build();
     Assertions.assertFalse(specification.containsVersion(this.onePointTwo));
     Assertions.assertFalse(specification.containsVersion(this.onePointTwoBranch));
@@ -145,15 +118,9 @@ public class VersionsSpecificationTest {
         () ->
             this.builder()
                 .addVersionRange(
-                    new VersionRangeElement(
-                        new Boundaries<>(
-                            new UnlimitedLowerBoundary(),
-                            new InclusiveUpperBoundary(this.onePointTwo))))
+                    new UnlimitedLowerBoundary(), new InclusiveUpperBoundary(this.onePointTwo))
                 .addVersionRange(
-                    new VersionRangeElement(
-                        new Boundaries<>(
-                            new InclusiveLowerBoundary(this.onePointTwo),
-                            new UnlimitedUpperBoundary())))
+                    new InclusiveLowerBoundary(this.onePointTwo), new UnlimitedUpperBoundary())
                 .build());
   }
 
@@ -162,15 +129,9 @@ public class VersionsSpecificationTest {
     final VersionsSpecification specification =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new UnlimitedLowerBoundary(),
-                        new InclusiveUpperBoundary(this.onePointTwoBranch))))
+                new UnlimitedLowerBoundary(), new InclusiveUpperBoundary(this.onePointTwoBranch))
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new InclusiveLowerBoundary(this.onePointTwo),
-                        new UnlimitedUpperBoundary())))
+                new InclusiveLowerBoundary(this.onePointTwo), new UnlimitedUpperBoundary())
             .build();
     Assertions.assertTrue(specification.containsVersion(this.onePointTwo));
     Assertions.assertTrue(specification.containsVersion(this.onePointTwoBranch));
@@ -181,7 +142,7 @@ public class VersionsSpecificationTest {
   @Test
   public void testEqualExplicitVersionIntersection() {
     final VersionsSpecification specification =
-        this.builder().addExplicitVersion(new ExplicitVersionElement(this.onePointTwo)).build();
+        this.builder().addExplicitVersion(this.onePointTwo).build();
     Optional<VersionsSpecification> intersection = specification.getIntersection(specification);
     Assertions.assertTrue(intersection.isPresent());
     Assertions.assertEquals(specification, intersection.get());
@@ -192,10 +153,8 @@ public class VersionsSpecificationTest {
     final VersionsSpecification specification =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new InclusiveLowerBoundary(this.onePointTwoSnapshot),
-                        new InclusiveUpperBoundary(this.onePointTwoPointOne))))
+                new InclusiveLowerBoundary(this.onePointTwoSnapshot),
+                new InclusiveUpperBoundary(this.onePointTwoPointOne))
             .build();
     Optional<VersionsSpecification> intersection = specification.getIntersection(specification);
     Assertions.assertTrue(intersection.isPresent());
@@ -207,13 +166,11 @@ public class VersionsSpecificationTest {
     final VersionsSpecification rangeSpecification =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new InclusiveLowerBoundary(this.onePointTwoSnapshot),
-                        new InclusiveUpperBoundary(this.onePointTwoPointOne))))
+                new InclusiveLowerBoundary(this.onePointTwoSnapshot),
+                new InclusiveUpperBoundary(this.onePointTwoPointOne))
             .build();
     final VersionsSpecification versionSpecification =
-        this.builder().addExplicitVersion(new ExplicitVersionElement(this.onePointTwo)).build();
+        this.builder().addExplicitVersion(this.onePointTwo).build();
     Optional<VersionsSpecification> intersection =
         rangeSpecification.getIntersection(versionSpecification);
     Assertions.assertTrue(intersection.isPresent());
@@ -229,21 +186,11 @@ public class VersionsSpecificationTest {
         new InclusiveLowerBoundary(this.onePointTwoSnapshot);
     final InclusiveUpperBoundary lowestUpper = new InclusiveUpperBoundary(this.onePointTwoPointOne);
     final VersionsSpecification specification1 =
-        this.builder()
-            .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(highestLower, new UnlimitedUpperBoundary())))
-            .build();
+        this.builder().addVersionRange(highestLower, new UnlimitedUpperBoundary()).build();
     final VersionsSpecification specification2 =
-        this.builder()
-            .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(new UnlimitedLowerBoundary(), lowestUpper)))
-            .build();
+        this.builder().addVersionRange(new UnlimitedLowerBoundary(), lowestUpper).build();
     final VersionsSpecification expectedIntersection =
-        this.builder()
-            .addVersionRange(new VersionRangeElement(new Boundaries<>(highestLower, lowestUpper)))
-            .build();
+        this.builder().addVersionRange(highestLower, lowestUpper).build();
     Optional<VersionsSpecification> intersection = specification1.getIntersection(specification2);
     Assertions.assertTrue(intersection.isPresent());
     Assertions.assertEquals(expectedIntersection, intersection.get());
@@ -258,21 +205,14 @@ public class VersionsSpecificationTest {
         new InclusiveLowerBoundary(this.onePointTwoSnapshot);
     final InclusiveUpperBoundary lowestUpper = new InclusiveUpperBoundary(this.onePointTwo);
     final VersionsSpecification specification1 =
-        this.builder()
-            .addVersionRange(new VersionRangeElement(new Boundaries<>(highestLower, lowestUpper)))
-            .build();
+        this.builder().addVersionRange(highestLower, lowestUpper).build();
     final VersionsSpecification specification2 =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new UnlimitedLowerBoundary(),
-                        new InclusiveUpperBoundary(this.onePointTwoPointOne))))
+                new UnlimitedLowerBoundary(), new InclusiveUpperBoundary(this.onePointTwoPointOne))
             .build();
     final VersionsSpecification expectedIntersection =
-        this.builder()
-            .addVersionRange(new VersionRangeElement(new Boundaries<>(highestLower, lowestUpper)))
-            .build();
+        this.builder().addVersionRange(highestLower, lowestUpper).build();
     Optional<VersionsSpecification> intersection = specification1.getIntersection(specification2);
     Assertions.assertTrue(intersection.isPresent());
     Assertions.assertEquals(expectedIntersection, intersection.get());
@@ -286,16 +226,14 @@ public class VersionsSpecificationTest {
     final VersionsSpecification rangeSpecification =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new InclusiveLowerBoundary(this.onePointTwoSnapshot),
-                        new InclusiveUpperBoundary(this.onePointTwoPointOne))))
+                new InclusiveLowerBoundary(this.onePointTwoSnapshot),
+                new InclusiveUpperBoundary(this.onePointTwoPointOne))
             .build();
     final VersionsSpecification versionSpecification =
         this.builder()
-            .addExplicitVersion(new ExplicitVersionElement(this.onePointTwoSnapshot))
-            .addExplicitVersion(new ExplicitVersionElement(this.onePointTwo))
-            .addExplicitVersion(new ExplicitVersionElement(this.onePointTwoPointOne))
+            .addExplicitVersion(this.onePointTwoSnapshot)
+            .addExplicitVersion(this.onePointTwo)
+            .addExplicitVersion(this.onePointTwoPointOne)
             .build();
     Optional<VersionsSpecification> intersection =
         rangeSpecification.getIntersection(versionSpecification);
@@ -311,19 +249,17 @@ public class VersionsSpecificationTest {
     final VersionsSpecification rangeSpecification =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new ExclusiveLowerBoundary(this.onePointTwoSnapshot),
-                        new ExclusiveUpperBoundary(this.onePointTwoPointOne))))
+                new ExclusiveLowerBoundary(this.onePointTwoSnapshot),
+                new ExclusiveUpperBoundary(this.onePointTwoPointOne))
             .build();
     final VersionsSpecification versionSpecification =
         this.builder()
-            .addExplicitVersion(new ExplicitVersionElement(this.onePointTwoSnapshot))
-            .addExplicitVersion(new ExplicitVersionElement(this.onePointTwo))
-            .addExplicitVersion(new ExplicitVersionElement(this.onePointTwoPointOne))
+            .addExplicitVersion(this.onePointTwoSnapshot)
+            .addExplicitVersion(this.onePointTwo)
+            .addExplicitVersion(this.onePointTwoPointOne)
             .build();
     final VersionsSpecification expected =
-        this.builder().addExplicitVersion(new ExplicitVersionElement(this.onePointTwo)).build();
+        this.builder().addExplicitVersion(this.onePointTwo).build();
     Optional<VersionsSpecification> intersection =
         rangeSpecification.getIntersection(versionSpecification);
     Assertions.assertTrue(intersection.isPresent());
@@ -341,20 +277,13 @@ public class VersionsSpecificationTest {
     final InclusiveUpperBoundary upper2 = new InclusiveUpperBoundary(this.onePointTwoPointOne);
     final VersionsSpecification specification1 =
         this.builder()
-            .addVersionRange(
-                new VersionRangeElement(new Boundaries<>(new UnlimitedLowerBoundary(), upper1)))
-            .addVersionRange(
-                new VersionRangeElement(new Boundaries<>(lower2, new UnlimitedUpperBoundary())))
+            .addVersionRange(new UnlimitedLowerBoundary(), upper1)
+            .addVersionRange(lower2, new UnlimitedUpperBoundary())
             .build();
     final VersionsSpecification specification2 =
-        this.builder()
-            .addVersionRange(new VersionRangeElement(new Boundaries<>(lower1, upper2)))
-            .build();
+        this.builder().addVersionRange(lower1, upper2).build();
     final VersionsSpecification expectedIntersection =
-        this.builder()
-            .addVersionRange(new VersionRangeElement(new Boundaries<>(lower1, upper1)))
-            .addVersionRange(new VersionRangeElement(new Boundaries<>(lower2, upper2)))
-            .build();
+        this.builder().addVersionRange(lower1, upper1).addVersionRange(lower2, upper2).build();
     Optional<VersionsSpecification> intersection = specification1.getIntersection(specification2);
     Assertions.assertTrue(intersection.isPresent());
     Assertions.assertEquals(expectedIntersection, intersection.get());
@@ -370,23 +299,15 @@ public class VersionsSpecificationTest {
     final VersionsSpecification specification1 =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new UnlimitedLowerBoundary(),
-                        new InclusiveUpperBoundary(this.onePointTwoBranch))))
-            .addVersionRange(
-                new VersionRangeElement(new Boundaries<>(lower, new UnlimitedUpperBoundary())))
+                new UnlimitedLowerBoundary(), new InclusiveUpperBoundary(this.onePointTwoBranch))
+            .addVersionRange(lower, new UnlimitedUpperBoundary())
             .build();
     final VersionsSpecification specification2 =
         this.builder()
-            .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(new InclusiveLowerBoundary(this.onePointTwoSnapshot), upper)))
+            .addVersionRange(new InclusiveLowerBoundary(this.onePointTwoSnapshot), upper)
             .build();
     final VersionsSpecification expectedIntersection =
-        this.builder()
-            .addVersionRange(new VersionRangeElement(new Boundaries<>(lower, upper)))
-            .build();
+        this.builder().addVersionRange(lower, upper).build();
     Optional<VersionsSpecification> intersection = specification1.getIntersection(specification2);
     Assertions.assertTrue(intersection.isPresent());
     Assertions.assertEquals(expectedIntersection, intersection.get());
@@ -398,11 +319,9 @@ public class VersionsSpecificationTest {
   @Test
   public void testDifferentExplicitVersionsIntersect() {
     final VersionsSpecification specification1 =
-        this.builder().addExplicitVersion(new ExplicitVersionElement(this.onePointTwo)).build();
+        this.builder().addExplicitVersion(this.onePointTwo).build();
     final VersionsSpecification specification2 =
-        this.builder()
-            .addExplicitVersion(new ExplicitVersionElement(this.onePointTwoBranch))
-            .build();
+        this.builder().addExplicitVersion(this.onePointTwoBranch).build();
     Optional<VersionsSpecification> intersection = specification1.getIntersection(specification2);
     Assertions.assertFalse(intersection.isPresent());
     intersection = specification2.getIntersection(specification1);
@@ -414,18 +333,12 @@ public class VersionsSpecificationTest {
     final VersionsSpecification specification1 =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new UnlimitedLowerBoundary(),
-                        new InclusiveUpperBoundary(this.onePointTwo))))
+                new UnlimitedLowerBoundary(), new InclusiveUpperBoundary(this.onePointTwo))
             .build();
     final VersionsSpecification specification2 =
         this.builder()
             .addVersionRange(
-                new VersionRangeElement(
-                    new Boundaries<>(
-                        new ExclusiveLowerBoundary(this.onePointTwo),
-                        new UnlimitedUpperBoundary())))
+                new ExclusiveLowerBoundary(this.onePointTwo), new UnlimitedUpperBoundary())
             .build();
     Optional<VersionsSpecification> intersection = specification1.getIntersection(specification2);
     Assertions.assertFalse(intersection.isPresent());

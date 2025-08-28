@@ -20,26 +20,6 @@ public class DatedBaseVersionTest {
       new VersionBuilder().setMajor(2).setMinor(4).setIncremental(3).buildSnapshot();
 
   @Test
-  public void testIsSnapshot() {
-    final DatedBaseVersion snapshot =
-        new DatedBaseVersion(DatedBaseVersionTest.VERSION, DatedBaseVersionTest.DATE);
-    final DatedBaseVersion release =
-        new DatedBaseVersion(DatedBaseVersionTest.VERSION.toRelease(), DatedBaseVersionTest.DATE);
-    Assertions.assertFalse(release.isSnapshot());
-    Assertions.assertTrue(snapshot.isSnapshot());
-  }
-
-  @Test
-  public void testIsRelease() {
-    final DatedBaseVersion snapshot =
-        new DatedBaseVersion(DatedBaseVersionTest.VERSION, DatedBaseVersionTest.DATE);
-    final DatedBaseVersion release =
-        new DatedBaseVersion(DatedBaseVersionTest.VERSION.toRelease(), DatedBaseVersionTest.DATE);
-    Assertions.assertTrue(release.isRelease());
-    Assertions.assertFalse(snapshot.isRelease());
-  }
-
-  @Test
   public void testCompareToEquals() {
     final DatedBaseVersion version =
         new DatedBaseVersion(DatedBaseVersionTest.VERSION, DatedBaseVersionTest.DATE);
@@ -84,9 +64,9 @@ public class DatedBaseVersionTest {
     final DatedBaseVersion smaller =
         new DatedBaseVersion(
             new VersionBuilder()
-                .setMajor(version.getMajor())
-                .setMinor(version.getMinor())
-                .setIncremental(version.getIncremental() - 2)
+                .setMajor(version.version().getMajor())
+                .setMinor(version.version().getMinor())
+                .setIncremental(version.version().getIncremental() - 2)
                 .buildSnapshot(),
             DatedBaseVersionTest.DATE);
     Assertions.assertTrue(version.compareTo(smaller) > 0);
@@ -109,9 +89,9 @@ public class DatedBaseVersionTest {
     final DatedBaseVersion sameDate =
         new DatedBaseVersion(
             new VersionBuilder()
-                .setMajor(version.getMajor())
-                .setMinor(version.getMinor())
-                .setIncremental(version.getIncremental())
+                .setMajor(version.version().getMajor())
+                .setMinor(version.version().getMinor())
+                .setIncremental(version.version().getIncremental())
                 .buildSnapshot(),
             DatedBaseVersionTest.DATE);
     Assertions.assertEquals(version, sameDate);
@@ -162,9 +142,9 @@ public class DatedBaseVersionTest {
     final DatedBaseVersion smaller =
         new DatedBaseVersion(
             new VersionBuilder()
-                .setMajor(version.getMajor())
-                .setMinor(version.getMinor())
-                .setIncremental(version.getIncremental() - 2)
+                .setMajor(version.version().getMajor())
+                .setMinor(version.version().getMinor())
+                .setIncremental(version.version().getIncremental() - 2)
                 .buildSnapshot(),
             DatedBaseVersionTest.DATE);
     Assertions.assertNotEquals(version, smaller);
@@ -174,7 +154,7 @@ public class DatedBaseVersionTest {
   public void testAsUndated() {
     final DatedBaseVersion version =
         new DatedBaseVersion(DatedBaseVersionTest.VERSION, DatedBaseVersionTest.DATE);
-    Assertions.assertEquals(DatedBaseVersionTest.VERSION, version.asUndated());
+    Assertions.assertEquals(DatedBaseVersionTest.VERSION, version.version());
   }
 
   @Test

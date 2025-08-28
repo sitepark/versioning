@@ -1,7 +1,6 @@
 package com.sitepark.versioning.version.specification.element;
 
 import com.sitepark.versioning.Branch;
-import com.sitepark.versioning.version.Version;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,6 +9,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 abstract class MapBasedElementBranchSet<E extends SortedElementSet> implements ElementBranchSet {
   private static final long serialVersionUID = -4164300350265933240L;
@@ -26,18 +26,18 @@ abstract class MapBasedElementBranchSet<E extends SortedElementSet> implements E
 
   protected abstract E createItem();
 
-  @Override
-  public boolean containsVersion(final Version version) {
-    final E set = this.branchMap.get(version.getBranch());
-    if (set == null) {
-      return false;
+  public Stream<SpecificationElement> forBranch(final Branch branch) {
+    final var elements = this.branchMap.get(branch);
+    if (elements == null) {
+      return Stream.empty();
     }
-    for (final SpecificationElement element : set) {
-      if (element.containsVersion(version)) {
-        return true;
-      }
-    }
-    return false;
+    return elements.stream();
+  }
+
+  public Stream<SpecificationElement> forBranches(final Collection<Branch> branches) {
+    return this.branchMap.entrySet().stream()
+        .filter(e -> branches.contains(e.getKey()))
+        .flatMap(e -> e.getValue().stream());
   }
 
   /**
@@ -59,10 +59,9 @@ abstract class MapBasedElementBranchSet<E extends SortedElementSet> implements E
    * @see #containsAll(Collection)
    */
   public boolean contains(final Object object) {
-    if (!(object instanceof SpecificationElement)) {
+    if (!(object instanceof final SpecificationElement element)) {
       return false;
     }
-    final SpecificationElement element = (SpecificationElement) object;
     final E list = this.branchMap.get(element.getBranch());
     return list != null ? list.contains(element) : false;
   }
@@ -159,16 +158,15 @@ abstract class MapBasedElementBranchSet<E extends SortedElementSet> implements E
    */
   @Override
   public boolean remove(final Object other) {
-    if (!(other instanceof SpecificationElement)) {
+    if (!(other instanceof final SpecificationElement element)) {
       return false;
     }
-    final Branch branch = ((SpecificationElement) other).getBranch();
-    final SortedElementSet set = this.branchMap.get(branch);
+    final SortedElementSet set = this.branchMap.get(element.getBranch());
     if (set == null || set.remove(other)) {
       return false;
     }
     if (set.isEmpty()) {
-      this.branchMap.remove(branch, set);
+      this.branchMap.remove(element.getBranch(), set);
     }
     return true;
   }
@@ -391,7 +389,7 @@ abstract class MapBasedElementBranchSet<E extends SortedElementSet> implements E
    * Returns a String representation of this instance.
    *
    * The result is all {@link SpecificationElement}s sorted and grouped by
-   * their {@link Branch}es, separated by commas ({@code ,}) and surrounded by
+   * their {@link Branch}es, separated by commata ({@code ,}) and surrounded by
    * square brackets ({@code [}, {@code ]}).
    *
    * <p>

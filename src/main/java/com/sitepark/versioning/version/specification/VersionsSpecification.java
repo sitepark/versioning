@@ -7,7 +7,6 @@ import com.sitepark.versioning.version.specification.element.SortedElementBranch
 import com.sitepark.versioning.version.specification.element.SpecificationElement;
 import com.sitepark.versioning.version.specification.element.UnmodifiableSortedElementBranchSet;
 import com.sitepark.versioning.version.specification.element.VersionRangeElement;
-import com.sitepark.versioning.version.specification.element.boundary.Boundaries;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Optional;
@@ -31,6 +30,7 @@ import java.util.Optional;
  * @see #containsVersion(Version)
  * @see VersionsSpecificationParser
  * @see VersionsSpecificationBuilder
+ * @see VersionsSpecificationChecker
  */
 public final class VersionsSpecification implements Serializable {
   private static final long serialVersionUID = 6549872561421500098L;
@@ -50,20 +50,29 @@ public final class VersionsSpecification implements Serializable {
   }
 
   /**
+   * Returns the {@link SpecificationElement}s defining this specification.
+   *
+   * @return all elements of this instance
+   */
+  public UnmodifiableSortedElementBranchSet getElements() {
+    return this.elements;
+  }
+
+  /**
    * Returns wether a {@link Version} is contained inside this instance.
    *
    * This is the case if any of this instances {@link SpecificationElement}s
    * consideres the {@code Version} to be either equal (in the case of
-   * {@link ExplicitVersionElement}s) or inside it's {@link Boundaries} (in
-   * the case of {@link VersionRangeElement}s).
+   * {@link ExplicitVersionElement}s) or inside its boundaries (in the case of
+   * {@link VersionRangeElement}s).
    *
    * @param version the {@code Version} to check
    * @return {@code true} if the {@code Version} is compliant with this
    *         instance, {@code false} otherwise
-   * @see SpecificationElement#containsVersion(Version)
+   * @see VersionsSpecificationChecker#check(Version, VersionsSpecification)
    */
   public boolean containsVersion(final Version version) {
-    return this.elements.containsVersion(version);
+    return VersionsSpecificationChecker.DEFAULT.check(version, this);
   }
 
   /**
@@ -122,10 +131,6 @@ public final class VersionsSpecification implements Serializable {
 
   @Override
   public boolean equals(final Object other) {
-    if (!(other instanceof VersionsSpecification)) {
-      return false;
-    }
-    final VersionsSpecification that = (VersionsSpecification) other;
-    return this.elements.equals(that.elements);
+    return other instanceof final VersionsSpecification that && this.elements.equals(that.elements);
   }
 }

@@ -249,16 +249,17 @@ public class VersionParserTest {
         () -> VersionParserTest.PARSER.parseRelease("1.2.3-branch-qualifierA-qualifier\0B"));
   }
 
-  // ----- parsePotentialConcreteSnapshot -----
+  // ----- parseConcreteVersion -----
 
   @Test
   public void testConcreteFullSnapshot() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion(
             "1.2.3-branch-qualifierA-qualifierB-20210101.131313-123");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -271,11 +272,12 @@ public class VersionParserTest {
 
   @Test
   public void testConcreteSnapshotWithoutBranch() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot("1.2.3-20210101.131313-123");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion("1.2.3-20210101.131313-123");
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -287,12 +289,13 @@ public class VersionParserTest {
 
   @Test
   public void testConcreteFullDevelopSnapshot() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion(
             "1.2.3-develop-qualifierA-qualifierB-20210101.131313-123");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -305,12 +308,13 @@ public class VersionParserTest {
 
   @Test
   public void testConcreteSnapshotWithoutIncremental() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion(
             "1.2-branch-qualifierA-qualifierB-20210101.131313-123");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(0, snapshot.getIncremental());
@@ -323,12 +327,13 @@ public class VersionParserTest {
 
   @Test
   public void testConcreteSnapshotWithoutMinor() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion(
             "1..3-branch-qualifierA-qualifierB-20210101.131313-123");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(0, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -341,12 +346,13 @@ public class VersionParserTest {
 
   @Test
   public void testConcreteSnapshotWithoutMinorAndIncremental() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion(
             "1-branch-qualifierA-qualifierB-20210101.131313-123");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(0, snapshot.getMinor());
     Assertions.assertEquals(0, snapshot.getIncremental());
@@ -359,12 +365,13 @@ public class VersionParserTest {
 
   @Test
   public void testConcreteSnapshotWithoutMajor() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion(
             ".2.3-branch-qualifierA-qualifierB-20210101.131313-123");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
     Assertions.assertEquals(0, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -377,12 +384,13 @@ public class VersionParserTest {
 
   @Test
   public void testConcreteSnapshotWithoutMajorAndMinor() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion(
             "..3-branch-qualifierA-qualifierB-20210101.131313-123");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
     Assertions.assertEquals(0, snapshot.getMajor());
     Assertions.assertEquals(0, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -395,12 +403,13 @@ public class VersionParserTest {
 
   @Test
   public void testConcreteSnapshotWithoutMajorAndIncremental() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion(
             ".2.-branch-qualifierA-qualifierB-20210101.131313-123");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
     Assertions.assertEquals(0, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(0, snapshot.getIncremental());
@@ -413,12 +422,13 @@ public class VersionParserTest {
 
   @Test
   public void testConcreteSnapshotWithoutMajorAndMinorAndIncremental() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion(
             "..-branch-qualifierA-qualifierB-20210101.131313-123");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
     Assertions.assertEquals(0, snapshot.getMajor());
     Assertions.assertEquals(0, snapshot.getMinor());
     Assertions.assertEquals(0, snapshot.getIncremental());
@@ -431,11 +441,12 @@ public class VersionParserTest {
 
   @Test
   public void testConcreteSnapshotWithOnlyTimestampBuildnumber() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot("..-20210101.131313-123");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion("..-20210101.131313-123");
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
     Assertions.assertEquals(0, snapshot.getMajor());
     Assertions.assertEquals(0, snapshot.getMinor());
     Assertions.assertEquals(0, snapshot.getIncremental());
@@ -447,12 +458,13 @@ public class VersionParserTest {
 
   @Test
   public void testConcreteSnapshotWithTimestampBuildnumberLikeQualifiers() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion(
             "1.2.3-20210101.131313-123-20210202.101112-4");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final ConcreteSnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -464,12 +476,13 @@ public class VersionParserTest {
 
   @Test
   public void testSnapshotParsedAsConcreteSnapshot() throws ParseException {
-    final PotentialConcreteSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion(
             "1.2.3-branch-qualifierA-qualifierB-SNAPSHOT");
-    Assertions.assertFalse(version.isSnapshot());
-    Assertions.assertTrue(version.isRelease());
-    final ReleaseVersion release = version.getReleaseOrElse(null);
+    if (!(version instanceof final ReleaseVersion release)) {
+      Assertions.fail("expected release-version");
+      return;
+    }
     Assertions.assertEquals(1, release.getMajor());
     Assertions.assertEquals(2, release.getMinor());
     Assertions.assertEquals(3, release.getIncremental());
@@ -484,7 +497,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+            VersionParserTest.PARSER.parseConcreteVersion(
                 "1.2.3-branch-qualifierA-qualifierB" + "-20210101.131313-123-"));
   }
 
@@ -493,7 +506,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+            VersionParserTest.PARSER.parseConcreteVersion(
                 "1.2.3-branch-qualifierA--qualifierB" + "-20210101.131313-123"));
   }
 
@@ -502,7 +515,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+            VersionParserTest.PARSER.parseConcreteVersion(
                 "a.2.3-branch-qualifierA-qualifierB" + "-20210101.131313-123"));
   }
 
@@ -511,7 +524,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+            VersionParserTest.PARSER.parseConcreteVersion(
                 "1.b.3-branch-qualifierA-qualifierB" + "-20210101.131313-123"));
   }
 
@@ -520,21 +533,20 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+            VersionParserTest.PARSER.parseConcreteVersion(
                 "1.2.c-branch-qualifierA-qualifierB" + "-20210101.131313-123"));
   }
 
   @Test
   public void testConcreteSnapshotVersionEmptyString() throws ParseException {
     Assertions.assertThrows(
-        ParseException.class, () -> VersionParserTest.PARSER.parsePotentialConcreteSnapshot(""));
+        ParseException.class, () -> VersionParserTest.PARSER.parseConcreteVersion(""));
   }
 
   @Test
   public void testConcreteSnapshotVersionTextString() throws ParseException {
     Assertions.assertThrows(
-        ParseException.class,
-        () -> VersionParserTest.PARSER.parsePotentialConcreteSnapshot("someText"));
+        ParseException.class, () -> VersionParserTest.PARSER.parseConcreteVersion("someText"));
   }
 
   @Test
@@ -542,7 +554,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+            VersionParserTest.PARSER.parseConcreteVersion(
                 "1.2.3-branch-qualifierA-qualifier B" + "-20210101.131313-123"));
   }
 
@@ -551,7 +563,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+            VersionParserTest.PARSER.parseConcreteVersion(
                 "1.2.3-branch-qualifierA-qualifier\nB" + "-20210101.131313-123"));
   }
 
@@ -560,7 +572,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+            VersionParserTest.PARSER.parseConcreteVersion(
                 "1.2.3-branch-qualifierA-qualifier\tB" + "-20210101.131313-123"));
   }
 
@@ -569,7 +581,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+            VersionParserTest.PARSER.parseConcreteVersion(
                 "1.2.3-branch-qualifierA-qualifier	B" + "-20210101.131313-123"));
   }
 
@@ -578,7 +590,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+            VersionParserTest.PARSER.parseConcreteVersion(
                 "1.2.3-branch-qualifierA-qualifier\rB" + "-20210101.131313-123"));
   }
 
@@ -587,7 +599,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+            VersionParserTest.PARSER.parseConcreteVersion(
                 "1.2.3-branch-qualifierA-qualifier\bB" + "-20210101.131313-123"));
   }
 
@@ -596,20 +608,20 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialConcreteSnapshot(
+            VersionParserTest.PARSER.parseConcreteVersion(
                 "1.2.3-branch-qualifierA-qualifier\0B" + "-20210101.131313-123"));
   }
 
-  // ----- parsePotentialSnapshot -----
+  // ----- parseBaseVersion -----
 
   @Test
   public void testFullSnapshot() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot(
-            "1.2.3-branch-qualifierA-qualifierB-SNAPSHOT");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final SnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final BaseVersion version =
+        VersionParserTest.PARSER.parseBaseVersion("1.2.3-branch-qualifierA-qualifierB-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -620,11 +632,11 @@ public class VersionParserTest {
 
   @Test
   public void testSnapshotWithoutBranch() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot("1.2.3-SNAPSHOT");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final SnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final BaseVersion version = VersionParserTest.PARSER.parseBaseVersion("1.2.3-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -634,12 +646,12 @@ public class VersionParserTest {
 
   @Test
   public void testFullDevelopSnapshot() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot(
-            "1.2.3-develop-qualifierA-qualifierB-SNAPSHOT");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final SnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final BaseVersion version =
+        VersionParserTest.PARSER.parseBaseVersion("1.2.3-develop-qualifierA-qualifierB-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -650,12 +662,12 @@ public class VersionParserTest {
 
   @Test
   public void testSnapshotWithoutIncremental() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot(
-            "1.2-branch-qualifierA-qualifierB-SNAPSHOT");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final SnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final BaseVersion version =
+        VersionParserTest.PARSER.parseBaseVersion("1.2-branch-qualifierA-qualifierB-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(0, snapshot.getIncremental());
@@ -666,12 +678,12 @@ public class VersionParserTest {
 
   @Test
   public void testSnapshotWithoutMinor() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot(
-            "1..3-branch-qualifierA-qualifierB-SNAPSHOT");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final SnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final BaseVersion version =
+        VersionParserTest.PARSER.parseBaseVersion("1..3-branch-qualifierA-qualifierB-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(0, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -682,11 +694,12 @@ public class VersionParserTest {
 
   @Test
   public void testSnapshotWithoutMinorAndIncremental() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot("1-branch-qualifierA-qualifierB-SNAPSHOT");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final SnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final BaseVersion version =
+        VersionParserTest.PARSER.parseBaseVersion("1-branch-qualifierA-qualifierB-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(0, snapshot.getMinor());
     Assertions.assertEquals(0, snapshot.getIncremental());
@@ -697,12 +710,12 @@ public class VersionParserTest {
 
   @Test
   public void testSnapshotWithoutMajor() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot(
-            ".2.3-branch-qualifierA-qualifierB-SNAPSHOT");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final SnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final BaseVersion version =
+        VersionParserTest.PARSER.parseBaseVersion(".2.3-branch-qualifierA-qualifierB-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
     Assertions.assertEquals(0, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -713,12 +726,12 @@ public class VersionParserTest {
 
   @Test
   public void testSnapshotWithoutMajorAndMinor() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot(
-            "..3-branch-qualifierA-qualifierB-SNAPSHOT");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final SnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final BaseVersion version =
+        VersionParserTest.PARSER.parseBaseVersion("..3-branch-qualifierA-qualifierB-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
     Assertions.assertEquals(0, snapshot.getMajor());
     Assertions.assertEquals(0, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -729,12 +742,12 @@ public class VersionParserTest {
 
   @Test
   public void testSnapshotWithoutMajorAndIncremental() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot(
-            ".2.-branch-qualifierA-qualifierB-SNAPSHOT");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final SnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final BaseVersion version =
+        VersionParserTest.PARSER.parseBaseVersion(".2.-branch-qualifierA-qualifierB-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
     Assertions.assertEquals(0, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(0, snapshot.getIncremental());
@@ -745,11 +758,12 @@ public class VersionParserTest {
 
   @Test
   public void testSnapshotWithoutMajorAndMinorAndIncremental() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot("..-branch-qualifierA-qualifierB-SNAPSHOT");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final SnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final BaseVersion version =
+        VersionParserTest.PARSER.parseBaseVersion("..-branch-qualifierA-qualifierB-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
     Assertions.assertEquals(0, snapshot.getMajor());
     Assertions.assertEquals(0, snapshot.getMinor());
     Assertions.assertEquals(0, snapshot.getIncremental());
@@ -760,11 +774,11 @@ public class VersionParserTest {
 
   @Test
   public void testSnapshotWithOnlySnapshotQualifier() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot("..-SNAPSHOT");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final SnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final BaseVersion version = VersionParserTest.PARSER.parseBaseVersion("..-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
     Assertions.assertEquals(0, snapshot.getMajor());
     Assertions.assertEquals(0, snapshot.getMinor());
     Assertions.assertEquals(0, snapshot.getIncremental());
@@ -774,11 +788,12 @@ public class VersionParserTest {
 
   @Test
   public void testSnapshotWithSnapshotLikeQualifier() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot("1.2.3-SNAPSHOT-SNAPSHOT");
-    Assertions.assertTrue(version.isSnapshot());
-    Assertions.assertFalse(version.isRelease());
-    final SnapshotVersion snapshot = version.getSnapshotOrElse(null);
+    final BaseVersion version =
+        VersionParserTest.PARSER.parseBaseVersion("1.2.3-SNAPSHOT-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
@@ -788,11 +803,12 @@ public class VersionParserTest {
 
   @Test
   public void testParseSnapshotBranch() throws ParseException {
-    final PotentialSnapshotVersion version =
-        VersionParserTest.PARSER.parsePotentialSnapshot("1.2.3-SNAPSHOT-qualifier");
-    Assertions.assertFalse(version.isSnapshot());
-    Assertions.assertTrue(version.isRelease());
-    final ReleaseVersion release = version.getReleaseOrElse(null);
+    final BaseVersion version =
+        VersionParserTest.PARSER.parseBaseVersion("1.2.3-SNAPSHOT-qualifier");
+    if (!(version instanceof final ReleaseVersion release)) {
+      Assertions.fail("expected release-version");
+      return;
+    }
     Assertions.assertEquals(1, release.getMajor());
     Assertions.assertEquals(2, release.getMinor());
     Assertions.assertEquals(3, release.getIncremental());
@@ -806,7 +822,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialSnapshot(
+            VersionParserTest.PARSER.parseBaseVersion(
                 "1.2.3-branch-qualifierA-qualifierB-SNAPSHOT-"));
   }
 
@@ -815,7 +831,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialSnapshot(
+            VersionParserTest.PARSER.parseBaseVersion(
                 "1.2.3-branch-qualifierA--qualifierB-SNAPSHOT"));
   }
 
@@ -824,7 +840,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialSnapshot(
+            VersionParserTest.PARSER.parseBaseVersion(
                 "a.2.3-branch-qualifierA-qualifierB-SNAPSHOT"));
   }
 
@@ -833,7 +849,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialSnapshot(
+            VersionParserTest.PARSER.parseBaseVersion(
                 "1.b.3-branch-qualifierA-qualifierB-SNAPSHOT"));
   }
 
@@ -842,20 +858,20 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialSnapshot(
+            VersionParserTest.PARSER.parseBaseVersion(
                 "1.2.c-branch-qualifierA-qualifierB-SNAPSHOT"));
   }
 
   @Test
   public void testSnapshotVersionEmptyString() throws ParseException {
     Assertions.assertThrows(
-        ParseException.class, () -> VersionParserTest.PARSER.parsePotentialSnapshot(""));
+        ParseException.class, () -> VersionParserTest.PARSER.parseBaseVersion(""));
   }
 
   @Test
   public void testSnapshotVersionTextString() throws ParseException {
     Assertions.assertThrows(
-        ParseException.class, () -> VersionParserTest.PARSER.parsePotentialSnapshot("someText"));
+        ParseException.class, () -> VersionParserTest.PARSER.parseBaseVersion("someText"));
   }
 
   @Test
@@ -863,7 +879,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialSnapshot(
+            VersionParserTest.PARSER.parseBaseVersion(
                 "1.2.3-branch-qualifierA-qualifier B-SNAPSHOT"));
   }
 
@@ -872,7 +888,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialSnapshot(
+            VersionParserTest.PARSER.parseBaseVersion(
                 "1.2.3-branch-qualifierA-qualifier\nB-SNAPSHOT"));
   }
 
@@ -881,7 +897,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialSnapshot(
+            VersionParserTest.PARSER.parseBaseVersion(
                 "1.2.3-branch-qualifierA-qualifier\tB-SNAPSHOT"));
   }
 
@@ -890,7 +906,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialSnapshot(
+            VersionParserTest.PARSER.parseBaseVersion(
                 "1.2.3-branch-qualifierA-qualifier	B-SNAPSHOT"));
   }
 
@@ -899,7 +915,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialSnapshot(
+            VersionParserTest.PARSER.parseBaseVersion(
                 "1.2.3-branch-qualifierA-qualifier\rB-SNAPSHOT"));
   }
 
@@ -908,7 +924,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialSnapshot(
+            VersionParserTest.PARSER.parseBaseVersion(
                 "1.2.3-branch-qualifierA-qualifier\bB-SNAPSHOT"));
   }
 
@@ -917,7 +933,7 @@ public class VersionParserTest {
     Assertions.assertThrows(
         ParseException.class,
         () ->
-            VersionParserTest.PARSER.parsePotentialSnapshot(
+            VersionParserTest.PARSER.parseBaseVersion(
                 "1.2.3-branch-qualifierA-qualifier\0B-SNAPSHOT"));
   }
 }

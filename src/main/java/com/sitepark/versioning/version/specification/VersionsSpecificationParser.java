@@ -6,7 +6,6 @@ import com.sitepark.versioning.version.VersionParser;
 import com.sitepark.versioning.version.specification.element.ExplicitVersionElement;
 import com.sitepark.versioning.version.specification.element.SpecificationElement;
 import com.sitepark.versioning.version.specification.element.VersionRangeElement;
-import com.sitepark.versioning.version.specification.element.boundary.Boundaries;
 import com.sitepark.versioning.version.specification.element.boundary.Boundary;
 import com.sitepark.versioning.version.specification.element.boundary.ExclusiveLowerBoundary;
 import com.sitepark.versioning.version.specification.element.boundary.ExclusiveUpperBoundary;
@@ -199,7 +198,7 @@ public class VersionsSpecificationParser {
    * @param string the String to parse
    * @return the parsed {@code VersionsSpecification}
    * @throws ParseException if the String is invalidly formatted
-   * @throws InvalidBoundariesException if the {@link Boundaries} of a
+   * @throws InvalidBoundariesException if the boundaries of a
    *                                    {@link VersionRangeElement} are both
    *                                    "unlimited" or if a {@code Version}
    *                                    of a lower {@code Boundary} is

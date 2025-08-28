@@ -9,7 +9,8 @@ import java.util.Objects;
  * A class containing the common fields of {@link ReleaseVersion},
  * {@link SnapshotVersion} and {@link ConcreteSnapshotVersion}.
  */
-abstract class AbstractVersion implements Version, Serializable {
+abstract sealed class AbstractVersion implements Version, Serializable
+    permits ReleaseVersion, SnapshotVersion, ConcreteSnapshotVersion {
   private static final long serialVersionUID = 762173304150679702L;
 
   private final int major;
@@ -82,11 +83,8 @@ abstract class AbstractVersion implements Version, Serializable {
 
   @Override
   public boolean equals(final Object other) {
-    if (!(other instanceof AbstractVersion)) {
-      return false;
-    }
-    final Version that = (AbstractVersion) other;
-    return this.getMajor() == that.getMajor()
+    return other instanceof final AbstractVersion that
+        && this.getMajor() == that.getMajor()
         && this.getMinor() == that.getMinor()
         && this.getIncremental() == that.getIncremental()
         && this.getBranch().equals(that.getBranch())

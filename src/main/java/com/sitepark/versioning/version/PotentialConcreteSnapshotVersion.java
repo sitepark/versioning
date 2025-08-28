@@ -1,5 +1,6 @@
 package com.sitepark.versioning.version;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -35,11 +36,12 @@ import java.util.function.Supplier;
  *         .getReleaseOrElseThrow(() -&gt; new SnapshotDependenciesException(
  *                "cannot have snapshot dependencies; found " + dependency));
  * </code>
+ * @deprecated as of java 17 this class can be substituted with pattern-matching
  * @see PotentialSnapshotVersion
  */
+@Deprecated(since = "3.0.0", forRemoval = true)
 public final class PotentialConcreteSnapshotVersion {
-  private final ConcreteSnapshotVersion snapshot;
-  private final ReleaseVersion release;
+  private final ConcreteVersion version;
 
   /**
    * Returns an {@code PotentialConcreteSnapshotVersion} with the specified
@@ -51,7 +53,7 @@ public final class PotentialConcreteSnapshotVersion {
    * @see #ofVersion(ConcreteVersion)
    */
   public static PotentialConcreteSnapshotVersion ofSnapshot(final ConcreteSnapshotVersion version) {
-    return new PotentialConcreteSnapshotVersion(version, null);
+    return new PotentialConcreteSnapshotVersion(version);
   }
 
   /**
@@ -64,7 +66,7 @@ public final class PotentialConcreteSnapshotVersion {
    * @see #ofVersion(ConcreteVersion)
    */
   public static PotentialConcreteSnapshotVersion ofRelease(final ReleaseVersion version) {
-    return new PotentialConcreteSnapshotVersion(null, version);
+    return new PotentialConcreteSnapshotVersion(version);
   }
 
   /**
@@ -81,27 +83,11 @@ public final class PotentialConcreteSnapshotVersion {
    * @see #ofRelease(ReleaseVersion)
    */
   public static PotentialConcreteSnapshotVersion ofVersion(final ConcreteVersion version) {
-    if (version instanceof ConcreteSnapshotVersion) {
-      return PotentialConcreteSnapshotVersion.ofSnapshot((ConcreteSnapshotVersion) version);
-    }
-    if (version instanceof ReleaseVersion) {
-      return PotentialConcreteSnapshotVersion.ofRelease((ReleaseVersion) version);
-    }
-    throw new IllegalArgumentException(
-        "required either a ConcreteSnapshotVersion or a ReleaseVersion,"
-            + " got "
-            + version.getClass().getName());
+    return new PotentialConcreteSnapshotVersion(version);
   }
 
-  private PotentialConcreteSnapshotVersion(
-      final ConcreteSnapshotVersion snapshot, final ReleaseVersion release) {
-    if (!(snapshot == null ^ release == null)) {
-      throw new IllegalArgumentException(
-          "PotentialConcreteSnapshotVersions has to have exactly "
-              + "one ConcreteSnapshotVersion or ReleaseVersion");
-    }
-    this.snapshot = snapshot;
-    this.release = release;
+  private PotentialConcreteSnapshotVersion(final ConcreteVersion version) {
+    this.version = Objects.requireNonNull(version);
   }
 
   /**
@@ -118,7 +104,7 @@ public final class PotentialConcreteSnapshotVersion {
    * @see #getReleaseOrElseThrow(Supplier)
    */
   public ConcreteVersion get() {
-    return this.snapshot != null ? this.snapshot : this.release;
+    return this.version;
   }
 
   /**
@@ -131,7 +117,7 @@ public final class PotentialConcreteSnapshotVersion {
    *         {@code ConcreteSnapshotVersion}, {@code false} otherwise
    */
   public boolean isSnapshot() {
-    return this.snapshot != null;
+    return this.version instanceof ConcreteSnapshotVersion;
   }
 
   /**
@@ -144,7 +130,7 @@ public final class PotentialConcreteSnapshotVersion {
    *         {@code false} otherwise
    */
   public boolean isRelease() {
-    return this.release != null;
+    return this.version instanceof ReleaseVersion;
   }
 
   /**
@@ -157,8 +143,8 @@ public final class PotentialConcreteSnapshotVersion {
    * @see #ifIsSnapshotOrElse(Consumer, Consumer)
    */
   public void ifIsSnapshot(final Consumer<? super ConcreteSnapshotVersion> action) {
-    if (this.isSnapshot()) {
-      action.accept(this.snapshot);
+    if (this.version instanceof final ConcreteSnapshotVersion snapshot) {
+      action.accept(snapshot);
     }
   }
 
@@ -172,8 +158,8 @@ public final class PotentialConcreteSnapshotVersion {
    * @see #ifIsSnapshotOrElse(Consumer, Consumer)
    */
   public void ifIsRelease(final Consumer<? super ReleaseVersion> action) {
-    if (this.isRelease()) {
-      action.accept(this.release);
+    if (this.version instanceof final ReleaseVersion release) {
+      action.accept(release);
     }
   }
 
@@ -194,10 +180,9 @@ public final class PotentialConcreteSnapshotVersion {
   public void ifIsSnapshotOrElse(
       final Consumer<? super ConcreteSnapshotVersion> snapshotAction,
       final Consumer<? super ReleaseVersion> releaseAction) {
-    if (this.isSnapshot()) {
-      snapshotAction.accept(this.snapshot);
-    } else {
-      releaseAction.accept(this.release);
+    switch (this.version) {
+      case ConcreteSnapshotVersion snapshot -> snapshotAction.accept(snapshot);
+      case ReleaseVersion release -> releaseAction.accept(release);
     }
   }
 
@@ -216,7 +201,10 @@ public final class PotentialConcreteSnapshotVersion {
    * @see #getRelease()
    */
   public Optional<ConcreteSnapshotVersion> getSnapshot() {
-    return Optional.ofNullable(this.snapshot);
+    return switch (this.version) {
+      case ConcreteSnapshotVersion snapshot -> Optional.of(snapshot);
+      case ReleaseVersion release -> Optional.empty();
+    };
   }
 
   /**
@@ -234,7 +222,10 @@ public final class PotentialConcreteSnapshotVersion {
    * @see #getSnapshot()
    */
   public Optional<ReleaseVersion> getRelease() {
-    return Optional.ofNullable(this.release);
+    return switch (this.version) {
+      case ConcreteSnapshotVersion snapshot -> Optional.empty();
+      case ReleaseVersion release -> Optional.of(release);
+    };
   }
 
   /**
@@ -252,7 +243,10 @@ public final class PotentialConcreteSnapshotVersion {
    * @see #getReleaseOrElse(ReleaseVersion)
    */
   public ConcreteSnapshotVersion getSnapshotOrElse(final ConcreteSnapshotVersion other) {
-    return this.isSnapshot() ? this.snapshot : other;
+    return switch (this.version) {
+      case ConcreteSnapshotVersion snapshot -> snapshot;
+      case ReleaseVersion release -> other;
+    };
   }
 
   /**
@@ -271,7 +265,10 @@ public final class PotentialConcreteSnapshotVersion {
    * @see #getSnapshotOrElse(ConcreteSnapshotVersion)
    */
   public ReleaseVersion getReleaseOrElse(final ReleaseVersion other) {
-    return this.isRelease() ? this.release : other;
+    return switch (this.version) {
+      case ConcreteSnapshotVersion snapshot -> other;
+      case ReleaseVersion release -> release;
+    };
   }
 
   /**
@@ -291,7 +288,10 @@ public final class PotentialConcreteSnapshotVersion {
    */
   public ConcreteSnapshotVersion getSnapshotOrElseGet(
       final Supplier<? extends ConcreteSnapshotVersion> supplier) {
-    return this.isSnapshot() ? this.snapshot : supplier.get();
+    return switch (this.version) {
+      case ConcreteSnapshotVersion snapshot -> snapshot;
+      case ReleaseVersion release -> supplier.get();
+    };
   }
 
   /**
@@ -310,7 +310,10 @@ public final class PotentialConcreteSnapshotVersion {
    * @see #getSnapshotOrElseGet(Supplier)
    */
   public ReleaseVersion getReleaseOrElseGet(final Supplier<? extends ReleaseVersion> supplier) {
-    return this.isRelease() ? this.release : supplier.get();
+    return switch (this.version) {
+      case ConcreteSnapshotVersion snapshot -> supplier.get();
+      case ReleaseVersion release -> release;
+    };
   }
 
   /**
@@ -333,10 +336,10 @@ public final class PotentialConcreteSnapshotVersion {
    */
   public <X extends Throwable> ConcreteSnapshotVersion getSnapshotOrElseThrow(
       final Supplier<? extends X> exceptionSupplier) throws X {
-    if (this.isSnapshot()) {
-      return this.snapshot;
-    }
-    throw exceptionSupplier.get();
+    return switch (this.version) {
+      case ConcreteSnapshotVersion snapshot -> snapshot;
+      case ReleaseVersion release -> throw exceptionSupplier.get();
+    };
   }
 
   /**
@@ -358,10 +361,10 @@ public final class PotentialConcreteSnapshotVersion {
    */
   public <X extends Throwable> ReleaseVersion getReleaseOrElseThrow(
       final Supplier<? extends X> exceptionSupplier) throws X {
-    if (this.isRelease()) {
-      return this.release;
-    }
-    throw exceptionSupplier.get();
+    return switch (this.version) {
+      case ConcreteSnapshotVersion snapshot -> throw exceptionSupplier.get();
+      case ReleaseVersion release -> release;
+    };
   }
 
   /**
@@ -379,8 +382,9 @@ public final class PotentialConcreteSnapshotVersion {
   public <R> R mapEither(
       final Function<? super ConcreteSnapshotVersion, ? extends R> snapshotMapper,
       final Function<? super ReleaseVersion, ? extends R> releaseMapper) {
-    return this.isSnapshot()
-        ? snapshotMapper.apply(this.snapshot)
-        : releaseMapper.apply(this.release);
+    return switch (this.version) {
+      case ConcreteSnapshotVersion snapshot -> snapshotMapper.apply(snapshot);
+      case ReleaseVersion release -> releaseMapper.apply(release);
+    };
   }
 }

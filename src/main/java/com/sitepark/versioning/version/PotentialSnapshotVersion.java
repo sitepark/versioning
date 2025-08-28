@@ -1,5 +1,6 @@
 package com.sitepark.versioning.version;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,11 +37,12 @@ import java.util.function.Supplier;
  *             repository::getLatestConcreteVersion,
  *             Function.identity());
  * </pre>
+ * @deprecated as of java 17 this class can be substituted with pattern-matching
  * @see PotentialConcreteSnapshotVersion
  */
+@Deprecated(since = "3.0.0", forRemoval = true)
 public final class PotentialSnapshotVersion {
-  private final SnapshotVersion snapshot;
-  private final ReleaseVersion release;
+  private final BaseVersion version;
 
   /**
    * Returns an {@code PotentialSnapshotVersion} with the specified
@@ -52,7 +54,7 @@ public final class PotentialSnapshotVersion {
    * @see #ofVersion(BaseVersion)
    */
   public static PotentialSnapshotVersion ofSnapshot(final SnapshotVersion version) {
-    return new PotentialSnapshotVersion(version, null);
+    return new PotentialSnapshotVersion(version);
   }
 
   /**
@@ -65,7 +67,7 @@ public final class PotentialSnapshotVersion {
    * @see #ofVersion(BaseVersion)
    */
   public static PotentialSnapshotVersion ofRelease(final ReleaseVersion version) {
-    return new PotentialSnapshotVersion(null, version);
+    return new PotentialSnapshotVersion(version);
   }
 
   /**
@@ -83,25 +85,11 @@ public final class PotentialSnapshotVersion {
    */
   public static PotentialSnapshotVersion ofVersion(final BaseVersion version)
       throws IllegalArgumentException {
-    if (version instanceof SnapshotVersion) {
-      return PotentialSnapshotVersion.ofSnapshot((SnapshotVersion) version);
-    }
-    if (version instanceof ReleaseVersion) {
-      return PotentialSnapshotVersion.ofRelease((ReleaseVersion) version);
-    }
-    throw new IllegalArgumentException(
-        "required either a SnapshotVersion or a ReleaseVersion, got "
-            + version.getClass().getName());
+    return new PotentialSnapshotVersion(version);
   }
 
-  private PotentialSnapshotVersion(final SnapshotVersion snapshot, final ReleaseVersion release) {
-    if (!(snapshot == null ^ release == null)) {
-      throw new IllegalArgumentException(
-          "PotentialSnapshotVersion has to have exactly "
-              + "one SnapshotVersion or ReleaseVersion");
-    }
-    this.snapshot = snapshot;
-    this.release = release;
+  private PotentialSnapshotVersion(final BaseVersion version) {
+    this.version = Objects.requireNonNull(version);
   }
 
   /**
@@ -118,7 +106,7 @@ public final class PotentialSnapshotVersion {
    * @see #getReleaseOrElseThrow(Supplier)
    */
   public BaseVersion get() {
-    return this.snapshot != null ? this.snapshot : this.release;
+    return this.version;
   }
 
   /**
@@ -131,7 +119,7 @@ public final class PotentialSnapshotVersion {
    *         {@code false} otherwise
    */
   public boolean isSnapshot() {
-    return this.snapshot != null;
+    return this.version instanceof SnapshotVersion;
   }
 
   /**
@@ -144,7 +132,7 @@ public final class PotentialSnapshotVersion {
    *         {@code false} otherwise
    */
   public boolean isRelease() {
-    return this.release != null;
+    return this.version instanceof ReleaseVersion;
   }
 
   /**
@@ -157,8 +145,8 @@ public final class PotentialSnapshotVersion {
    * @see #ifIsSnapshotOrElse(Consumer, Consumer)
    */
   public void ifIsSnapshot(final Consumer<? super SnapshotVersion> action) {
-    if (this.isSnapshot()) {
-      action.accept(this.snapshot);
+    if (this.version instanceof final SnapshotVersion snapshot) {
+      action.accept(snapshot);
     }
   }
 
@@ -172,8 +160,8 @@ public final class PotentialSnapshotVersion {
    * @see #ifIsSnapshotOrElse(Consumer, Consumer)
    */
   public void ifIsRelease(final Consumer<? super ReleaseVersion> action) {
-    if (this.isRelease()) {
-      action.accept(this.release);
+    if (this.version instanceof final ReleaseVersion release) {
+      action.accept(release);
     }
   }
 
@@ -194,10 +182,9 @@ public final class PotentialSnapshotVersion {
   public void ifIsSnapshotOrElse(
       final Consumer<? super SnapshotVersion> snapshotAction,
       final Consumer<? super ReleaseVersion> releaseAction) {
-    if (this.isSnapshot()) {
-      snapshotAction.accept(this.snapshot);
-    } else {
-      releaseAction.accept(this.release);
+    switch (this.version) {
+      case SnapshotVersion snapshot -> snapshotAction.accept(snapshot);
+      case ReleaseVersion release -> releaseAction.accept(release);
     }
   }
 
@@ -217,7 +204,10 @@ public final class PotentialSnapshotVersion {
    * @see #getRelease()
    */
   public Optional<SnapshotVersion> getSnapshot() {
-    return Optional.ofNullable(this.snapshot);
+    return switch (this.version) {
+      case SnapshotVersion snapshot -> Optional.of(snapshot);
+      case ReleaseVersion release -> Optional.empty();
+    };
   }
 
   /**
@@ -235,7 +225,10 @@ public final class PotentialSnapshotVersion {
    * @see #getSnapshot()
    */
   public Optional<ReleaseVersion> getRelease() {
-    return Optional.ofNullable(this.release);
+    return switch (this.version) {
+      case SnapshotVersion snapshot -> Optional.empty();
+      case ReleaseVersion release -> Optional.of(release);
+    };
   }
 
   /**
@@ -253,7 +246,10 @@ public final class PotentialSnapshotVersion {
    * @see #getReleaseOrElse(ReleaseVersion)
    */
   public SnapshotVersion getSnapshotOrElse(final SnapshotVersion other) {
-    return this.isSnapshot() ? this.snapshot : other;
+    return switch (this.version) {
+      case SnapshotVersion snapshot -> snapshot;
+      case ReleaseVersion release -> other;
+    };
   }
 
   /**
@@ -271,7 +267,10 @@ public final class PotentialSnapshotVersion {
    * @see #getSnapshotOrElse(SnapshotVersion)
    */
   public ReleaseVersion getReleaseOrElse(final ReleaseVersion other) {
-    return this.isRelease() ? this.release : other;
+    return switch (this.version) {
+      case SnapshotVersion snapshot -> other;
+      case ReleaseVersion release -> release;
+    };
   }
 
   /**
@@ -290,7 +289,10 @@ public final class PotentialSnapshotVersion {
    * @see #getReleaseOrElseGet(Supplier)
    */
   public SnapshotVersion getSnapshotOrElseGet(final Supplier<? extends SnapshotVersion> supplier) {
-    return this.isSnapshot() ? this.snapshot : supplier.get();
+    return switch (this.version) {
+      case SnapshotVersion snapshot -> snapshot;
+      case ReleaseVersion release -> supplier.get();
+    };
   }
 
   /**
@@ -309,7 +311,10 @@ public final class PotentialSnapshotVersion {
    * @see #getSnapshotOrElseGet(Supplier)
    */
   public ReleaseVersion getReleaseOrElseGet(final Supplier<? extends ReleaseVersion> supplier) {
-    return this.isRelease() ? this.release : supplier.get();
+    return switch (this.version) {
+      case SnapshotVersion snapshot -> supplier.get();
+      case ReleaseVersion release -> release;
+    };
   }
 
   /**
@@ -331,10 +336,10 @@ public final class PotentialSnapshotVersion {
    */
   public <X extends Throwable> SnapshotVersion getSnapshotOrElseThrow(
       final Supplier<? extends X> exceptionSupplier) throws X {
-    if (this.isSnapshot()) {
-      return this.snapshot;
-    }
-    throw exceptionSupplier.get();
+    return switch (this.version) {
+      case SnapshotVersion snapshot -> snapshot;
+      case ReleaseVersion release -> throw exceptionSupplier.get();
+    };
   }
 
   /**
@@ -356,10 +361,10 @@ public final class PotentialSnapshotVersion {
    */
   public <X extends Throwable> ReleaseVersion getReleaseOrElseThrow(
       final Supplier<? extends X> exceptionSupplier) throws X {
-    if (this.isRelease()) {
-      return this.release;
-    }
-    throw exceptionSupplier.get();
+    return switch (this.version) {
+      case SnapshotVersion snapshot -> throw exceptionSupplier.get();
+      case ReleaseVersion release -> release;
+    };
   }
 
   /**
@@ -377,8 +382,9 @@ public final class PotentialSnapshotVersion {
   public <R> R mapEither(
       final Function<? super SnapshotVersion, ? extends R> snapshotMapper,
       final Function<? super ReleaseVersion, ? extends R> releaseMapper) {
-    return this.isSnapshot()
-        ? snapshotMapper.apply(this.snapshot)
-        : releaseMapper.apply(this.release);
+    return switch (this.version) {
+      case SnapshotVersion snapshot -> snapshotMapper.apply(snapshot);
+      case ReleaseVersion release -> releaseMapper.apply(release);
+    };
   }
 }

@@ -8,34 +8,27 @@ import org.junit.jupiter.api.Test;
 
 public class VersionFormatterTest {
 
-  public static Version featureVersion;
-  public static Version fullVersion;
-  public static Version qualifiersVersion;
-  public static Version simpleVersion;
-  public static Version snapshotVersion;
-  public static Version unparsedSnapshotVersion;
+  public static ConcreteVersion featureVersion;
+  public static ConcreteVersion fullVersion;
+  public static ConcreteVersion qualifiersVersion;
+  public static ConcreteVersion simpleVersion;
+  public static ConcreteVersion snapshotVersion;
+  public static ConcreteVersion unparsedSnapshotVersion;
 
   @BeforeAll
   public static void setUp() throws ParseException {
     VersionFormatterTest.featureVersion =
-        VersionParser.DEFAULT_PARSER.parsePotentialConcreteSnapshot("1.2.3-my_feature").get();
+        VersionParser.DEFAULT_PARSER.parseConcreteVersion("1.2.3-my_feature");
     VersionFormatterTest.fullVersion =
-        VersionParser.DEFAULT_PARSER
-            .parsePotentialConcreteSnapshot(
-                "1.2.3-my_feature-some-other-qualifiers-20121209.171545-13")
-            .get();
+        VersionParser.DEFAULT_PARSER.parseConcreteVersion(
+            "1.2.3-my_feature-some-other-qualifiers-20121209.171545-13");
     VersionFormatterTest.qualifiersVersion =
-        VersionParser.DEFAULT_PARSER
-            .parsePotentialConcreteSnapshot("1.2.3-my_feature-some-other-qualifiers")
-            .get();
-    VersionFormatterTest.simpleVersion =
-        VersionParser.DEFAULT_PARSER.parsePotentialConcreteSnapshot("1.2.3").get();
+        VersionParser.DEFAULT_PARSER.parseConcreteVersion("1.2.3-my_feature-some-other-qualifiers");
+    VersionFormatterTest.simpleVersion = VersionParser.DEFAULT_PARSER.parseConcreteVersion("1.2.3");
     VersionFormatterTest.snapshotVersion =
-        VersionParser.DEFAULT_PARSER
-            .parsePotentialConcreteSnapshot("1.2.3-20121209.171545-13")
-            .get();
+        VersionParser.DEFAULT_PARSER.parseConcreteVersion("1.2.3-20121209.171545-13");
     VersionFormatterTest.unparsedSnapshotVersion =
-        VersionParser.DEFAULT_PARSER.parsePotentialConcreteSnapshot("1.2.3-SNAPSHOT").get();
+        VersionParser.DEFAULT_PARSER.parseConcreteVersion("1.2.3-SNAPSHOT");
   }
 
   @Test

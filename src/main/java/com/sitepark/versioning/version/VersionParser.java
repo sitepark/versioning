@@ -81,8 +81,8 @@ import java.text.ParseException;
  * This class is immutable and thread-safe.
  *
  * @see #parseRelease(String)
- * @see #parsePotentialSnapshot(String)
- * @see #parsePotentialConcreteSnapshot(String)
+ * @see #parseBaseVersion(String)
+ * @see #parseConcreteVersion(String)
  */
 public class VersionParser {
 
@@ -180,16 +180,16 @@ public class VersionParser {
    *
    * <p>
    * {@code qualifiers}, that imply the {@link Version} not beeing a
-   * {@link ReleaseVersion} in the {@link #parsePotentialSnapshot(String)} and
-   * {@link #parsePotentialConcreteSnapshot(String)} methods do not have any
-   * special meaning here.
+   * {@link ReleaseVersion} in the {@link #parseBaseVersion(String)} and
+   * {@link #parseConcreteVersion(String)} methods do not have any special
+   * meaning here.
    *
    * @param version the String to be parsed
-   * @return the resulting ReleaseVersion
+   * @return the resulting {@link ReleaseVersion}
    * @throws ParseException when the given String is not compatible with the
    *                        required format
-   * @see #parsePotentialSnapshot(String)
-   * @see #parsePotentialConcreteSnapshot(String)
+   * @see #parseBaseVersion(String)
+   * @see #parseConcreteVersion(String)
    */
   public ReleaseVersion parseRelease(final String version) throws ParseException {
     return new ReleaseParseExecutor(version, this.flags).execute();
@@ -247,12 +247,74 @@ public class VersionParser {
    *          {@link PotentialSnapshotVersion}
    * @throws ParseException when the given String is not compatible with the
    *                        required format
+   * @deprecated use {@link #parseBaseVersion(String)} instead
    * @see #parseRelease(String)
    * @see #parsePotentialConcreteSnapshot(String)
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.0.0", forRemoval = true)
   public PotentialSnapshotVersion parsePotentialSnapshot(final String version)
       throws ParseException {
-    return new PotentialSnapshotParseExecutor(version, this.flags).execute();
+    return PotentialSnapshotVersion.ofVersion(
+        new BaseVersionParseExecutor(version, this.flags).execute());
+  }
+
+  /**
+   * Parses a String into either a {@link SnapshotVersion} or a
+   * {@link ReleaseVersion}.
+   *
+   * The required format is as follows:<br>
+   * {@code "<major>.<minor>.<incremental>-<branch>-<qualifiers>-SNAPSHOT"}
+   * <ul>
+   *   <li>
+   *     {@code major} may be omitted if not leaving the String empty,
+   *     defaults to zero ({@code 0})
+   *   </li>
+   *   <li>
+   *     {@code minor} and the leading dot ({@code .}) may be omitted,
+   *     defaults to zero ({@code 0})
+   *   </li>
+   *   <li>
+   *     {@code incremental} and the leading dot ({@code .}) may be omitted,
+   *     defaults to zero ({@code 0})
+   *   </li>
+   *   <li>
+   *     {@code branch} and the leading hyphon ({@code -}) may be omitted if
+   *     no {@code qualifiers} are given, defaults to {@link Branch#DEVELOP}
+   *   </li>
+   *   <li>
+   *     {@code qualifiers} and the leading hyphon ({@code -}) may be ommitted
+   *   </li>
+   *   <li>
+   *     {@code "-SNAPSHOT"} causes the result to be a {@code SnapshotVersion}
+   *     if present and a {@code ReleaseVersion} otherwise
+   *   </li>
+   * </ul>
+   *
+   * <p>
+   * All of these are valid examples:
+   * <pre>
+   *    "1.0.0-develop"
+   *    "1"
+   *    ".2"
+   *    "1.3-some_feature-release_candidate-0"
+   *    "-experimental"
+   * </pre>
+   *
+   * <p>
+   * If the {@code "SNAPSHOT"} {@code qualifier} is not located at the very
+   * end it is interpreted as any other {@code qualifier} or as
+   * {@code branch} depending on it's position.
+   *
+   * @param version the String to be parsed
+   * @return the resulting {@link BaseVersion}
+   * @throws ParseException when the given String is not compatible with the
+   *                        required format
+   * @see #parseRelease(String)
+   * @see #parseConcreteVersion(String)
+   */
+  public BaseVersion parseBaseVersion(final String version) throws ParseException {
+    return new BaseVersionParseExecutor(version, this.flags).execute();
   }
 
   /**
@@ -309,11 +371,75 @@ public class VersionParser {
    *          {@link PotentialConcreteSnapshotVersion}
    * @throws ParseException when the given String is not compatible with the
    *                        required format
+   * @deprecated use {@link #parseConcreteVersion(String)} instead
    * @see #parseRelease(String)
    * @see #parsePotentialSnapshot(String)
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.0.0", forRemoval = true)
   public PotentialConcreteSnapshotVersion parsePotentialConcreteSnapshot(final String version)
       throws ParseException {
-    return new PotentialConcreteSnapshotParseExecutor(version, this.flags).execute();
+    return PotentialConcreteSnapshotVersion.ofVersion(
+        new ConcreteVersionParseExecutor(version, this.flags).execute());
+  }
+
+  /**
+   * Parses a String into either a {@link ConcreteSnapshotVersion} or a
+   * {@link ReleaseVersion}.
+   *
+   * The required format is as follows:<br>
+   * {@code "<major>.<minor>.<incremental>-<branch>-<qualifiers>-<timestamp>-<buildnumber>"}
+   * <ul>
+   *   <li>
+   *     {@code major} may be omitted if not leaving the String empty,
+   *     defaults to zero ({@code 0})
+   *   </li>
+   *   <li>
+   *     {@code minor} and the leading dot ({@code .}) may be omitted,
+   *     defaults to zero ({@code 0})
+   *   </li>
+   *   <li>
+   *     {@code incremental} and the leading dot ({@code .}) may be omitted,
+   *     defaults to zero ({@code 0})
+   *   </li>
+   *   <li>
+   *     {@code branch} and the leading hyphon ({@code -}) may be omitted if
+   *     no {@code qualifiers} are given, defaults to {@link Branch#DEVELOP}
+   *   </li>
+   *   <li>
+   *     {@code qualifiers} and the leading hyphon ({@code -}) may be ommitted
+   *   </li>
+   *   <li>
+   *     {@code timestamp} and {@code buildnumber} causes the result to be a
+   *     {@code ConcreteSnapshotVersion} if both are present (with their
+   *     hyphens ({@code -}) and a {@code ReleaseVersion} otherwise.
+   *   </li>
+   * </ul>
+   *
+   * <p>
+   * All of these are valid examples:
+   * <pre>
+   *    "1.0.0-develop"
+   *    "1"
+   *    ".2"
+   *    "1.3-some_feature-release_candidate-0"
+   *    "-experimental"
+   * </pre>
+   *
+   * <p>
+   * If only one of the {@code timestamp} and {@code buildnumber}
+   * {@code qualifiers} is present or they are not at the very end in the
+   * correct order they are interpreted as any other {@code qualifiers} or as
+   * {@code branch} depending on their position.
+   *
+   * @param version the String to be parsed
+   * @return the resulting {@link ConcreteVersion}
+   * @throws ParseException when the given String is not compatible with the
+   *                        required format
+   * @see #parseRelease(String)
+   * @see #parseBaseVersion(String)
+   */
+  public ConcreteVersion parseConcreteVersion(final String version) throws ParseException {
+    return new ConcreteVersionParseExecutor(version, this.flags).execute();
   }
 }

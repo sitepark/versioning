@@ -1,10 +1,8 @@
 package com.sitepark.versioning.version;
 
-import com.sitepark.versioning.Branch;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -12,88 +10,22 @@ import java.util.Objects;
  * This can be usefull if the {@code builddate} of a {@link Version} is not
  * part of the {@code Version} (see {@link ConcreteSnapshotVersion}) or may
  * differ from it.
+ *
+ * @param version the version to associate a date with
+ * @param date the date to associate the version with
  */
-public class DatedBaseVersion implements BaseVersion, Serializable {
+public record DatedBaseVersion(BaseVersion version, LocalDateTime date)
+    implements Comparable<DatedBaseVersion>, Serializable {
+
   private static final long serialVersionUID = -3999130925615216416L;
 
   private static final DateTimeFormatter DATE_TIME_FORMATTER =
       DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.n");
 
-  private final BaseVersion version;
-  private final LocalDateTime date;
-
-  /**
-   * Class Constructor specifiying the {@link BaseVersion} and a
-   * {@link LocalDateTime} to associate it with.
-   *
-   * @param version the version to associate a date with
-   * @param date the date to associate the version with
-   */
-  public DatedBaseVersion(final BaseVersion version, final LocalDateTime date) {
-    this.version = Objects.requireNonNull(version);
-    this.date = Objects.requireNonNull(date);
-  }
-
-  /**
-   * Returns the {@link LocalDateTime} this instances {@link BaseVersion} is
-   * associated with.
-   *
-   * @return the date of this {@code BaseVersion}
-   */
-  public LocalDateTime getDate() {
-    return this.date;
-  }
-
-  /**
-   * Returns this instances {@link BaseVersion} without date association.
-   *
-   * @return a {@code BaseVersion} without date
-   */
-  public BaseVersion asUndated() {
-    return this.version;
-  }
-
   @Override
-  public int getMajor() {
-    return this.version.getMajor();
-  }
-
-  @Override
-  public int getMinor() {
-    return this.version.getMinor();
-  }
-
-  @Override
-  public int getIncremental() {
-    return this.version.getIncremental();
-  }
-
-  @Override
-  public Branch getBranch() {
-    return this.version.getBranch();
-  }
-
-  @Override
-  public List<String> getQualifiers() {
-    return this.version.getQualifiers();
-  }
-
-  @Override
-  public boolean isRelease() {
-    return this.version.isRelease();
-  }
-
-  @Override
-  public boolean isSnapshot() {
-    return this.version.isSnapshot();
-  }
-
-  @Override
-  public int compareTo(final Version other) {
-    final int cmp = this.version.compareTo(other);
-    return cmp == 0 && other instanceof DatedBaseVersion
-        ? this.date.compareTo(((DatedBaseVersion) other).date)
-        : cmp;
+  public int compareTo(final DatedBaseVersion other) {
+    final int cmp = this.version.compareTo(other.version);
+    return cmp != 0 ? cmp : this.date.compareTo(other.date);
   }
 
   @Override
@@ -103,11 +35,9 @@ public class DatedBaseVersion implements BaseVersion, Serializable {
 
   @Override
   public boolean equals(final Object other) {
-    if (!(other instanceof DatedBaseVersion)) {
-      return false;
-    }
-    final DatedBaseVersion that = (DatedBaseVersion) other;
-    return this.version.equals(that.version) && this.date.equals(that.date);
+    return other instanceof final DatedBaseVersion that
+        && this.version.equals(that.version)
+        && this.date.equals(that.date);
   }
 
   /**
