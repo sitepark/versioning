@@ -9,7 +9,9 @@
 	<exclude-pattern>.*/target/.*</exclude-pattern>
 
 	<rule ref="category/java/bestpractices.xml"/>
-	<rule ref="category/java/codestyle.xml"/>
+	<rule ref="category/java/codestyle.xml">
+		<exclude name="ModifierOrder"/> <!-- in PMD 7.17.0 this rule is incompatible with JLS and therefore spotless -->
+	</rule>
 	<rule ref="category/java/design.xml">
 		<exclude name="LoosePackageCoupling"/> <!-- causes warnings when nothing is configured -->
 	</rule>
