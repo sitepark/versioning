@@ -16,6 +16,18 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
   /**
    * A {@link Comparator} with natual ordering (ascending) that respects all
    * aspects of the {@link Version}s given.
+   * <ol>
+   *  <li>4.0.0-SNAPSHOT</li>
+   *  <li>3.2.1</li>
+   *  <li>3.2.0</li>
+   *  <li>3.0.2</li>
+   *  <li>3.0.1-SNAPSHOT</li>
+   *  <li>3.0.0-feature_a</li>
+   *  <li>3.0.0</li>
+   *  <li>3.0.0-feature_b_rc1-SNAPSHOT</li>
+   *  <li>3.0.0-feature_a_rc2-SNAPSHOT</li>
+   *  <li>3.0.0-SNAPSHOT</li>
+   * </ol>
    */
   public static final VersionComparator<Version> NATUAL =
       (a, b) -> {
@@ -38,23 +50,35 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
   /**
    * A {@link Comparator} with reversed ordering (descending) that respects all
    * aspects of the {@link Version}s given.
+   * <ol>
+   *  <li>3.0.0-SNAPSHOT</li>
+   *  <li>3.0.0-feature_a_rc2-SNAPSHOT</li>
+   *  <li>3.0.0-feature_b_rc1-SNAPSHOT</li>
+   *  <li>3.0.0</li>
+   *  <li>3.0.0-feature_a</li>
+   *  <li>3.0.1-SNAPSHOT</li>
+   *  <li>3.0.2</li>
+   *  <li>3.2.0</li>
+   *  <li>3.2.1</li>
+   *  <li>4.0.0-SNAPSHOT</li>
+   * </ol>
    */
   public static final VersionComparator<Version> REVERSED =
       (a, b) -> {
         int cmp;
-        if ((cmp = VersionComparator.compareNumbers(a, b)) != 0) {
-          return cmp * -1;
+        if ((cmp = VersionComparator.compareNumbers(b, a)) != 0) {
+          return cmp;
         }
-        if ((cmp = VersionComparator.compareSnapshots(a, b)) != 0) {
-          return cmp * -1;
+        if ((cmp = VersionComparator.compareSnapshots(b, a)) != 0) {
+          return cmp;
         }
-        if ((cmp = VersionComparator.compareBranch(a, b)) != 0) {
-          return cmp * -1;
+        if ((cmp = VersionComparator.compareBranch(b, a)) != 0) {
+          return cmp;
         }
-        if ((cmp = VersionComparator.compareQualifiers(a, b)) != 0) {
-          return cmp * -1;
+        if ((cmp = VersionComparator.compareQualifiers(b, a)) != 0) {
+          return cmp;
         }
-        return VersionComparator.compareConcreteSnapshots(a, b) * -1;
+        return VersionComparator.compareConcreteSnapshots(b, a);
       };
 
   /**
