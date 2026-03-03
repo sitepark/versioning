@@ -164,9 +164,9 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
       /* we shift everything to the right such that we do not have to have a
        * case for each variant with each direction */
       return switch (this.instruction >> 1) {
-          // include everything
+        // include everything
         case 0 -> direction == 1 ? VersionComparator.NATUAL : VersionComparator.REVERSED;
-          // exclude branches
+        // exclude branches
         case 1 ->
             (a, b) -> {
               int cmp;
@@ -181,7 +181,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
               }
               return VersionComparator.compareConcreteSnapshots(a, b) * direction;
             };
-          // exclude qualifiers
+        // exclude qualifiers
         case 2 ->
             (a, b) -> {
               int cmp;
@@ -196,7 +196,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
               }
               return VersionComparator.compareConcreteSnapshots(a, b) * direction;
             };
-          // exclude branches and qualifiers
+        // exclude branches and qualifiers
         case 3 ->
             (a, b) -> {
               int cmp;
@@ -208,7 +208,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
               }
               return VersionComparator.compareConcreteSnapshots(a, b) * direction;
             };
-          // exclude concrete snapshots
+        // exclude concrete snapshots
         case 4 ->
             (a, b) -> {
               int cmp;
@@ -223,7 +223,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
               }
               return VersionComparator.compareQualifiers(a, b) * direction;
             };
-          // exclude branches and concrete snapshots
+        // exclude branches and concrete snapshots
         case 5 ->
             (a, b) -> {
               int cmp;
@@ -235,7 +235,7 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
               }
               return VersionComparator.compareQualifiers(a, b) * direction;
             };
-          // exclude qualifiers and concrete snapshots
+        // exclude qualifiers and concrete snapshots
         case 6 ->
             (a, b) -> {
               int cmp;
@@ -247,13 +247,13 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
               }
               return VersionComparator.compareBranch(a, b) * direction;
             };
-          // exclude branches, qualifiers and concrete snapshots
+        // exclude branches, qualifiers and concrete snapshots
         case 7 ->
             (a, b) -> {
               final int cmp = VersionComparator.compareNumbers(a, b);
               return (cmp == 0 ? VersionComparator.compareSnapshots(a, b) : cmp) * direction;
             };
-          // something went wrong
+        // something went wrong
         default ->
             throw new IllegalStateException("illegal internal state (" + this.instruction + ")");
       };
