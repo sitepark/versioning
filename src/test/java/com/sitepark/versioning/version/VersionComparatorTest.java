@@ -153,7 +153,7 @@ public class VersionComparatorTest {
                 SNAPSHOT_3_0_0,
                 SNAPSHOT_3_0_0_FEATURE_A_RC2,
                 SNAPSHOT_3_0_0_FEATURE_B_RC1)
-            .sorted(VersionComparator.builder().ignoreBranches().ignoreQualifiers().build())
+            .sorted(VersionComparator.IGNORING_ALL_QUALIFIERS)
             .toList();
     Assertions.assertEquals(expected, result);
   }

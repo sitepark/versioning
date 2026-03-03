@@ -89,6 +89,14 @@ public interface VersionComparator<T extends Version> extends Comparator<T>, Ser
       VersionComparator.builder().ignoreBranches().build();
 
   /**
+   * A {@link Comparator} with natual ordering (ascending) that respects all
+   * aspects of the {@link Version}s given except {@link Branch}es and other
+   * qualifiers.
+   */
+  public static final VersionComparator<Version> IGNORING_ALL_QUALIFIERS =
+      VersionComparator.builder().ignoreBranches().ignoreQualifiers().build();
+
+  /**
    * A builder to create individual {@link VersionComparator} instances.
    *
    * This should be used when intending to ignore certain aspects of the

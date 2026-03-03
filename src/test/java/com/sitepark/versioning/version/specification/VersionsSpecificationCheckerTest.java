@@ -23,6 +23,14 @@ public class VersionsSpecificationCheckerTest {
       new VersionBuilder().setMajor(1).setMinor(2).buildSnapshot();
   private final BaseVersion onePointTwoPointOne =
       new VersionBuilder().setMajor(1).setMinor(2).setIncremental(1).buildSnapshot();
+  private final BaseVersion onePointTwoPointOneBranchQualifier =
+      new VersionBuilder()
+          .setMajor(1)
+          .setMinor(2)
+          .setIncremental(1)
+          .setBranch(new Branch("feature"))
+          .addQualifier("qualifier")
+          .buildSnapshot();
 
   @Test
   public void testSingleVersionRangeInclusiveUpperContains() {
@@ -163,6 +171,32 @@ public class VersionsSpecificationCheckerTest {
     Assertions.assertTrue(
         VersionsSpecificationChecker.IGNORING_BRANCHES.check(
             this.onePointTwoPointOne, specification));
+  }
+
+  @Test
+  public void testIgnoringAllQualifiersContains() {
+    final VersionsSpecification specification =
+        this.builder()
+            .addVersionRange(
+                new UnlimitedLowerBoundary(), new InclusiveUpperBoundary(this.onePointTwoBranch))
+            .addVersionRange(
+                new InclusiveLowerBoundary(this.onePointTwo), new UnlimitedUpperBoundary())
+            .build();
+    Assertions.assertTrue(
+        VersionsSpecificationChecker.IGNORING_ALL_QUALIFIERS.check(
+            this.onePointTwo, specification));
+    Assertions.assertTrue(
+        VersionsSpecificationChecker.IGNORING_ALL_QUALIFIERS.check(
+            this.onePointTwoBranch, specification));
+    Assertions.assertTrue(
+        VersionsSpecificationChecker.IGNORING_ALL_QUALIFIERS.check(
+            this.onePointTwoSnapshot, specification));
+    Assertions.assertTrue(
+        VersionsSpecificationChecker.IGNORING_ALL_QUALIFIERS.check(
+            this.onePointTwoPointOne, specification));
+    Assertions.assertTrue(
+        VersionsSpecificationChecker.IGNORING_ALL_QUALIFIERS.check(
+            this.onePointTwoPointOneBranchQualifier, specification));
   }
 
   private final VersionsSpecificationBuilder builder() {

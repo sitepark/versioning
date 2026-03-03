@@ -65,6 +65,31 @@ public interface VersionsSpecificationChecker {
       };
 
   /**
+   * A {@link VersionsSpecificationChecker} implementation, that ignores all
+   * qualifiers (including the {@link Branch}es) of the
+   * {@link SpecificationElement}s and the {@link Version}s given.
+   *
+   * <p>
+   * This means, that a specification like
+   * {@code [3.4.1-feature, 4.0.0-feature-SNAPSHOT)}, complies with all of these
+   * versions:
+   * {@code 3.4.2, 3.4.2-feature, 3.4.2-feature-qualifier, 3.4.2-otherfeature}
+   * under this instance, whereas {@link #DEFAULT} would only allow
+   * {@code 3.4.2-feature}.
+   */
+  public static final VersionsSpecificationChecker IGNORING_ALL_QUALIFIERS =
+      new VersionsSpecificationChecker() {
+        @Override
+        public boolean check(final Version version, final VersionsSpecification specification) {
+          return specification.getElements().stream()
+              .anyMatch(
+                  element ->
+                      this.checkElement(
+                          element, version, VersionComparator.IGNORING_ALL_QUALIFIERS));
+        }
+      };
+
+  /**
    * Verifies that a {@link Version} complies with a {@link VersionsSpecification}s.
    *
    * @param specification the specification to check the {@code version} against
