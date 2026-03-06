@@ -52,9 +52,9 @@ class VersionsSpecificationParseExecutor {
   private Section section = Section.BEFORE_ELEMENT;
   private int index = -1;
 
-  private String currentUpperVersion = "";
+  private StringBuilder currentUpperVersion = new StringBuilder();
   private int currentUpperVersionLength = 0;
-  private String currentLowerVersion = "";
+  private StringBuilder currentLowerVersion = new StringBuilder();
   private int currentLowerVersionLength = 0;
   private boolean currentRangeIsStartInclusive = true;
   private boolean currentRangeIsEndInclusive = true;
@@ -176,12 +176,12 @@ class VersionsSpecificationParseExecutor {
   }
 
   private void appendCurrentLowerVersion() {
-    this.currentLowerVersion += this.currentChar;
+    this.currentLowerVersion.append(this.currentChar);
     this.currentLowerVersionLength += 1;
   }
 
   private void appendCurrentUpperVersion() {
-    this.currentUpperVersion += this.currentChar;
+    this.currentUpperVersion.append(this.currentChar);
     this.currentUpperVersionLength += 1;
   }
 
@@ -205,13 +205,13 @@ class VersionsSpecificationParseExecutor {
     }
     this.builder.addExplicitVersion(
         VersionsSpecificationParseExecutor.VERSION_PARSER.parseBaseVersion(
-            this.currentLowerVersion));
+            this.currentLowerVersion.toString()));
   }
 
   private void resetValues() {
-    this.currentUpperVersion = "";
+    this.currentUpperVersion.setLength(0);
     this.currentUpperVersionLength = 0;
-    this.currentLowerVersion = "";
+    this.currentLowerVersion.setLength(0);
     this.currentLowerVersionLength = 0;
     this.currentRangeIsStartInclusive = true;
     this.currentRangeIsEndInclusive = true;
@@ -224,7 +224,7 @@ class VersionsSpecificationParseExecutor {
   private void parseOnlyUpperBoundary() throws ParseException {
     final BaseVersion version =
         VersionsSpecificationParseExecutor.VERSION_PARSER.parseBaseVersion(
-            this.currentUpperVersion);
+            this.currentUpperVersion.toString());
     this.builder.addVersionRange(
         new UnlimitedLowerBoundary(),
         this.currentRangeIsEndInclusive
@@ -235,7 +235,7 @@ class VersionsSpecificationParseExecutor {
   private void parseOnlyLowerBoundary() throws ParseException {
     final BaseVersion version =
         VersionsSpecificationParseExecutor.VERSION_PARSER.parseBaseVersion(
-            this.currentLowerVersion);
+            this.currentLowerVersion.toString());
     this.builder.addVersionRange(
         this.currentRangeIsStartInclusive
             ? new InclusiveLowerBoundary(version)
@@ -246,10 +246,10 @@ class VersionsSpecificationParseExecutor {
   private void parseBothBoundaries() throws ParseException {
     final BaseVersion lowerVersion =
         VersionsSpecificationParseExecutor.VERSION_PARSER.parseBaseVersion(
-            this.currentLowerVersion);
+            this.currentLowerVersion.toString());
     final BaseVersion upperVersion =
         VersionsSpecificationParseExecutor.VERSION_PARSER.parseBaseVersion(
-            this.currentUpperVersion);
+            this.currentUpperVersion.toString());
     this.builder.addVersionRange(
         this.currentRangeIsStartInclusive
             ? new InclusiveLowerBoundary(lowerVersion)

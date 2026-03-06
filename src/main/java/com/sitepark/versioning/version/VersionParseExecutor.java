@@ -31,7 +31,7 @@ abstract class VersionParseExecutor<R> {
   protected char currentChar;
   protected int index = -1;
   protected boolean isLastChar = false;
-  protected String currentItem = "";
+  protected StringBuilder currentItem = new StringBuilder();
   protected int currentItemLength = 0;
   protected Section currentSection = Section.MAJOR;
 
@@ -147,7 +147,7 @@ abstract class VersionParseExecutor<R> {
   protected void addMajor() throws ParseException {
     try {
       if (this.currentItemLength > 0) {
-        this.versionBuilder.setMajor(Integer.parseInt(this.currentItem));
+        this.versionBuilder.setMajor(Integer.parseInt(this.currentItem.toString()));
         this.resetCurrentItem();
       }
       this.currentSection = Section.MINOR;
@@ -167,7 +167,7 @@ abstract class VersionParseExecutor<R> {
   protected void addMinor() throws ParseException {
     try {
       if (this.currentItemLength > 0) {
-        this.versionBuilder.setMinor(Integer.parseInt(this.currentItem));
+        this.versionBuilder.setMinor(Integer.parseInt(this.currentItem.toString()));
         this.resetCurrentItem();
       }
       this.currentSection = Section.INCREMENTAL;
@@ -187,7 +187,7 @@ abstract class VersionParseExecutor<R> {
   protected void addIncremental() throws ParseException {
     try {
       if (this.currentItemLength > 0) {
-        this.versionBuilder.setIncremental(Integer.parseInt(this.currentItem));
+        this.versionBuilder.setIncremental(Integer.parseInt(this.currentItem.toString()));
         this.resetCurrentItem();
       }
       this.currentSection = Section.BRANCH;
@@ -205,9 +205,10 @@ abstract class VersionParseExecutor<R> {
    * @see VersionBuilder#setBranch(Branch)
    */
   protected void addBranch() {
+    final String branch = this.currentItem.toString();
     if (!VersionParser.Characteristics.IGNORE_BRANCHES.isSet(this.flags)
-        && !this.currentItem.equalsIgnoreCase("develop")) {
-      this.versionBuilder.setBranch(new Branch(this.currentItem));
+        && !branch.equalsIgnoreCase("develop")) {
+      this.versionBuilder.setBranch(new Branch(branch));
     }
     this.resetCurrentItem();
     this.currentSection = Section.QUALIFIER;
@@ -223,7 +224,7 @@ abstract class VersionParseExecutor<R> {
    */
   protected void addQualifier() {
     if (!VersionParser.Characteristics.IGNORE_QUALIFIERS.isSet(this.flags)) {
-      this.versionBuilder.addQualifier(this.currentItem);
+      this.versionBuilder.addQualifier(this.currentItem.toString());
     }
     this.resetCurrentItem();
   }
@@ -232,7 +233,7 @@ abstract class VersionParseExecutor<R> {
    * Adds the {@link #currentChar} to the {@link #currentItem}.
    */
   protected void appendCharToCurrentItem() {
-    this.currentItem += this.currentChar;
+    this.currentItem.append(this.currentChar);
     this.currentItemLength++;
   }
 
@@ -240,7 +241,7 @@ abstract class VersionParseExecutor<R> {
    * Resets the {@link #currentItem} back to it's initial state.
    */
   protected void resetCurrentItem() {
-    this.currentItem = "";
+    this.currentItem = new StringBuilder();
     this.currentItemLength = 0;
   }
 }

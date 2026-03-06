@@ -88,7 +88,6 @@ abstract sealed class AbstractVersion implements Version, Serializable
         && this.getMinor() == that.getMinor()
         && this.getIncremental() == that.getIncremental()
         && this.getBranch().equals(that.getBranch())
-        && this.getQualifiers().size() == that.getQualifiers().size()
-        && this.getQualifiers().containsAll(that.getQualifiers());
+        && this.getQualifiers().equals(that.getQualifiers());
   }
 }

@@ -206,8 +206,7 @@ public class VersionBuilder {
    * @see #buildConcreteSnapshot(String, int)
    */
   public ReleaseVersion buildRelease() {
-    final ReleaseVersion value = new ReleaseVersion(this);
-    return value;
+    return new ReleaseVersion(this);
   }
 
   /**

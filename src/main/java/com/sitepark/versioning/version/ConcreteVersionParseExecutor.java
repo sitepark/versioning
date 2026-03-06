@@ -178,14 +178,14 @@ class ConcreteVersionParseExecutor extends VersionParseExecutor<ConcreteVersion>
   }
 
   private void storeCurrentItemAsTimestamp() {
-    this.timestampQualifier = this.currentItem;
+    this.timestampQualifier = this.currentItem.toString();
     this.resetCurrentItem();
     this.currentSection = Section.QUALIFIER;
   }
 
   private void addTimestampBuildnumber() throws ParseException {
     try {
-      this.buildnumberQualifier = Integer.parseInt(this.currentItem);
+      this.buildnumberQualifier = Integer.parseInt(this.currentItem.toString());
     } catch (final NumberFormatException exception) {
       this.fail();
     }

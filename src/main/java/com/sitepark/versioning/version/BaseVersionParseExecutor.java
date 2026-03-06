@@ -106,14 +106,14 @@ class BaseVersionParseExecutor extends VersionParseExecutor<BaseVersion> {
         this.addIncremental();
         break;
       case BRANCH:
-        if (this.currentItem.equals("SNAPSHOT")) {
+        if (this.currentItem.toString().equals("SNAPSHOT")) {
           this.addSnapshot();
         } else {
           this.addBranch();
         }
         break;
       case QUALIFIER:
-        if (this.currentItem.equals("SNAPSHOT")) {
+        if (this.currentItem.toString().equals("SNAPSHOT")) {
           this.addSnapshot();
         } else {
           this.addQualifier();

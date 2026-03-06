@@ -3,7 +3,6 @@ package com.sitepark.versioning.version;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 
 /**
  * A class coupling a {@link LocalDateTime} with a {@link BaseVersion}.
@@ -26,18 +25,6 @@ public record DatedBaseVersion(BaseVersion version, LocalDateTime date)
   public int compareTo(final DatedBaseVersion other) {
     final int cmp = this.version.compareTo(other.version);
     return cmp != 0 ? cmp : this.date.compareTo(other.date);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(this.version, this.date);
-  }
-
-  @Override
-  public boolean equals(final Object other) {
-    return other instanceof final DatedBaseVersion that
-        && this.version.equals(that.version)
-        && this.date.equals(that.date);
   }
 
   /**
