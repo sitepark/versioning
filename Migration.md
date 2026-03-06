@@ -87,6 +87,7 @@ final Version version = new VersionsSpecificationBuilder()
 
 This class is merely a container for a `BaseVersion` and a date. It
 implementing `BaseVersion` was complicating the usage of that interface.
+It is now deprecated and will be removed in a future release.
 
 ## changed `ConcreteSnapshotVersion` creation via `VersionBuilder`
 

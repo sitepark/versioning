@@ -12,7 +12,9 @@ import java.time.format.DateTimeFormatter;
  *
  * @param version the version to associate a date with
  * @param date the date to associate the version with
+ * @deprecated
  */
+@Deprecated(since = "3.0.0", forRemoval = true)
 public record DatedBaseVersion(BaseVersion version, LocalDateTime date)
     implements Comparable<DatedBaseVersion>, Serializable {
 

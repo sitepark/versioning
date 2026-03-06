@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("removal")
 public class DatedBaseVersionTest {
 
   private static final LocalDateTime DATE =
