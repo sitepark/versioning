@@ -321,7 +321,7 @@ abstract class MapBasedElementBranchSet<E extends SortedElementSet> implements E
     return new SortedElementBranchSet(result);
   }
 
-  protected UnmodifiableSortedElementBranchSet unmodifiableClone() {
+  public UnmodifiableSortedElementBranchSet unmodifiableClone() {
     return new UnmodifiableSortedElementBranchSet(
         this.branchMap.entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().unmodifiableClone())));
