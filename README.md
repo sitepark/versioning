@@ -85,7 +85,7 @@ Version comparisons are carried out in the following order of precedence until o
 2. `minor` - Higher minor versions are considered greater.
 3. `incremental` - Higher incremental versions are considered greater.
 5. `snapshot status` - Release versions are considered greater than snapshot versions.
-4. `branch` - Versions with a `Branch.DEVELOP` are considered greater, others are compared lexicographically.
+4. `branch` - Versions with a `Branch.MAIN` are considered greater, others are compared lexicographically.
 6. `qualifiers` - Qualifiers are compared lexicographically (in order).  A version with fewer qualifiers is considered greater.
 7. `concrete snapshot timestamp` - If both Versions are ConcreteSnapshotVersions their `timestamp`s are compared _lexicographically_ (**not numerically!**  The result for the expected format `yyyyMMdd.HHmmss` is the same, but this is not enforced)
 8. `concrete snapshot buildnumber` - If both Versions are ConcreteSnapshotVersions the one with the higher `buildnumber` is considered greater.
@@ -128,7 +128,7 @@ Otherwise it can be configured with `VersionParser.Characteristics` with these v
 ```java
 final VersionParser parser = new VersionParser(
 
-    // do not set branches (they default to Branch.DEVELOP)
+    // do not set branches (they default to Branch.MAIN)
     VersionParser.Characteristics.IGNORE_BRANCHES,
 
     // do not set any qualifiers
@@ -142,7 +142,7 @@ Generally, a `String` to be parsed into a `Version` has to follow the following 
 `major` may be omitted if not leaving the `String` empty, defaults to zero (`0`)  
 `minor` and the leading dot (`.`) may be omitted, defaults to zero (`0`)  
 `incremental` and the leading dot (`.`) may be omitted, defaults to zero (`0`)  
-`branch` and the leading hyphon (`-`) may be omitted if no `qualifiers` are given, defaults to `Branch.DEVELOP`  
+`branch` and the leading hyphon (`-`) may be omitted if no `qualifiers` are given, defaults to `Branch.MAIN`  
 `qualifiers` and the leading hyphon (`-`) may be ommitted
 
 Here are some valid examples:
