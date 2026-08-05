@@ -147,7 +147,7 @@ Generally, a `String` to be parsed into a `Version` has to follow the following 
 
 Here are some valid examples:
 ```java
-"1.0.0-develop"
+"1.0.0-main"
 "1"
 ".2"
 "1.3-some_feature-release_candidate-0"
@@ -251,13 +251,13 @@ public class Repository {
 which then can be used like this to retrieve only the desired versions:
 
 ```java
-final List<BaseVersion> developReleases = repository.queryVersions(
+final List<BaseVersion> mainReleases = repository.queryVersions(
     new VersionTypes(
         VersionTypes.PublicationStatusType.RELEASES,
-        VersionTypes.BranchType.DEVELOP));
+        VersionTypes.BranchType.MAIN));
 
-final List<BaseVersion> developSnapshots = repository.queryVersions(
-    VersionTypes.ONLY_DEVELOP_SNAPSHOTS);
+final List<BaseVersion> mainSnapshots = repository.queryVersions(
+    VersionTypes.ONLY_MAIN_SNAPSHOTS);
 
 final List<BaseVersion> all = repository.queryVersions(VersionTypes.ALL);
 

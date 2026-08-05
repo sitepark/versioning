@@ -1,52 +1,56 @@
 package com.sitepark.versioning;
 
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class BranchTest {
 
   @Test
-  public void testDevelopIsDevelop() {
-    Assertions.assertTrue(new Branch("develop").isDevelop());
-    Assertions.assertTrue(new Branch("DEVELOP").isDevelop());
-    Assertions.assertTrue(new Branch("").isDevelop());
-    Assertions.assertTrue(Branch.DEVELOP.isDevelop());
+  public void testIsMain() {
+    final List<Branch> branches =
+        List.of(
+            new Branch("develop"),
+            new Branch("DEVELOP"),
+            Branch.DEVELOP,
+            new Branch("main"),
+            new Branch("MAIN"),
+            Branch.MAIN,
+            new Branch(""));
+    for (final Branch branch : branches) {
+      Assertions.assertTrue(branch.isDevelop());
+      Assertions.assertTrue(branch.isMain());
+      Assertions.assertFalse(branch.isFeature());
+    }
   }
 
   @Test
-  public void testFeatureIsFeature() {
-    Assertions.assertTrue(new Branch("my_feature").isFeature());
-    Assertions.assertTrue(new Branch("DEVE.LOP").isFeature());
-    Assertions.assertTrue(new Branch("_").isFeature());
+  public void testIsFeature() {
+    final List<Branch> branches =
+        List.of(new Branch("my_feature"), new Branch("DEVE.LOP"), new Branch("_"));
+    for (final Branch branch : branches) {
+      Assertions.assertTrue(branch.isFeature());
+      Assertions.assertFalse(branch.isDevelop());
+      Assertions.assertFalse(branch.isMain());
+    }
   }
 
   @Test
-  public void testDevelopIsNotFeature() {
-    Assertions.assertFalse(new Branch("develop").isFeature());
-    Assertions.assertFalse(new Branch("DEVELOP").isFeature());
-    Assertions.assertFalse(new Branch("").isFeature());
-    Assertions.assertFalse(Branch.DEVELOP.isFeature());
+  public void testToString() {
+    Assertions.assertEquals("main", new Branch("develop").toString());
+    Assertions.assertEquals("main", new Branch("DEVELOP").toString());
+    Assertions.assertEquals("main", Branch.DEVELOP.toString());
+    Assertions.assertEquals("main", new Branch("main").toString());
+    Assertions.assertEquals("main", new Branch("MAIN").toString());
+    Assertions.assertEquals("main", Branch.MAIN.toString());
+    Assertions.assertEquals("main", new Branch("").toString());
+    Assertions.assertEquals("my_feature", new Branch("my_feature").toString());
   }
 
   @Test
-  public void testFeatureIsNotDevelop() {
-    Assertions.assertFalse(new Branch("my_feature").isDevelop());
-    Assertions.assertFalse(new Branch("DEVE.LOP").isDevelop());
-    Assertions.assertFalse(new Branch("_").isDevelop());
-  }
-
-  @Test
-  public void testDevelopToString() {
-    Assertions.assertEquals("develop", new Branch("develop").toString());
-    Assertions.assertEquals("develop", new Branch("DEVELOP").toString());
-    Assertions.assertEquals("develop", new Branch("").toString());
-    Assertions.assertEquals("develop", Branch.DEVELOP.toString());
-  }
-
-  @Test
-  public void testDevelopIsGreaterThanFeature() {
-    Assertions.assertTrue(Branch.DEVELOP.compareTo(new Branch("z_feature")) > 0);
-    Assertions.assertTrue(Branch.DEVELOP.compareTo(new Branch("a_feature")) > 0);
+  public void testMainIsGreaterThanFeature() {
+    Assertions.assertTrue(Branch.MAIN.compareTo(new Branch("z_feature")) > 0);
+    Assertions.assertTrue(Branch.MAIN.compareTo(new Branch("a_feature")) > 0);
   }
 
   @Test

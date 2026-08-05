@@ -22,7 +22,7 @@ import java.text.ParseException;
  *   </li>
  *   <li>
  *     {@code branch} and the leading hyphon ({@code -}) may be omitted if no
- *     {@code qualifiers} are given, defaults to {@link Branch#DEVELOP}
+ *     {@code qualifiers} are given, defaults to {@link Branch#MAIN}
  *   </li>
  *   <li>
  *     {@code qualifiers} and the leading hyphon ({@code -}) may be ommitted
@@ -32,7 +32,7 @@ import java.text.ParseException;
  * <p>
  * Therefore all of these are valid examples:
  * <pre>
- *    "1.0.0-develop"
+ *    "1.0.0-main"
  *    "1"
  *    ".2"
  *    "1.3-some_feature-release_candidate-0"
@@ -66,7 +66,7 @@ import java.text.ParseException;
  * <ul>
  *   <li>
  *     {@link Characteristics#IGNORE_BRANCHES}<br>
- *     Always set the {@link Branch} to {@link Branch#DEVELOP}.  This does not
+ *     Always set the {@link Branch} to {@link Branch#MAIN}.  This does not
  *     cause {@code branch} keywords to be added to the {@code qualifiers}.
  *   </li>
  *   <li>
@@ -98,7 +98,7 @@ public class VersionParser {
    */
   public enum Characteristics {
     /**
-     * Always set the {@link Branch} to {@link Branch#DEVELOP}.
+     * Always set the {@link Branch} to {@link Branch#MAIN}.
      * This does not cause {@code branch} keywords to be added to the
      * {@code qualifiers}.
      */
@@ -161,7 +161,7 @@ public class VersionParser {
    *   </li>
    *   <li>
    *     {@code branch} and the leading hyphon ({@code -}) may be omitted if
-   *     no {@code qualifiers} are given, defaults to {@link Branch#DEVELOP}
+   *     no {@code qualifiers} are given, defaults to {@link Branch#MAIN}
    *   </li>
    *   <li>
    *     {@code qualifiers} and the leading hyphon ({@code -}) may be ommitted
@@ -171,7 +171,7 @@ public class VersionParser {
    * <p>
    * All of these are valid examples:
    * <pre>
-   *    "1.0.0-develop"
+   *    "1.0.0-main"
    *    "1"
    *    ".2"
    *    "1.3-some_feature-release_candidate-0"
@@ -216,7 +216,7 @@ public class VersionParser {
    *   </li>
    *   <li>
    *     {@code branch} and the leading hyphon ({@code -}) may be omitted if
-   *     no {@code qualifiers} are given, defaults to {@link Branch#DEVELOP}
+   *     no {@code qualifiers} are given, defaults to {@link Branch#MAIN}
    *   </li>
    *   <li>
    *     {@code qualifiers} and the leading hyphon ({@code -}) may be ommitted
@@ -230,7 +230,7 @@ public class VersionParser {
    * <p>
    * All of these are valid examples:
    * <pre>
-   *    "1.0.0-develop"
+   *    "1.0.0-main"
    *    "1"
    *    ".2"
    *    "1.3-some_feature-release_candidate-0"
@@ -280,7 +280,7 @@ public class VersionParser {
    *   </li>
    *   <li>
    *     {@code branch} and the leading hyphon ({@code -}) may be omitted if
-   *     no {@code qualifiers} are given, defaults to {@link Branch#DEVELOP}
+   *     no {@code qualifiers} are given, defaults to {@link Branch#MAIN}
    *   </li>
    *   <li>
    *     {@code qualifiers} and the leading hyphon ({@code -}) may be ommitted
@@ -294,7 +294,7 @@ public class VersionParser {
    * <p>
    * All of these are valid examples:
    * <pre>
-   *    "1.0.0-develop"
+   *    "1.0.0-main"
    *    "1"
    *    ".2"
    *    "1.3-some_feature-release_candidate-0"
@@ -338,7 +338,7 @@ public class VersionParser {
    *   </li>
    *   <li>
    *     {@code branch} and the leading hyphon ({@code -}) may be omitted if
-   *     no {@code qualifiers} are given, defaults to {@link Branch#DEVELOP}
+   *     no {@code qualifiers} are given, defaults to {@link Branch#MAIN}
    *   </li>
    *   <li>
    *     {@code qualifiers} and the leading hyphon ({@code -}) may be ommitted
@@ -353,7 +353,7 @@ public class VersionParser {
    * <p>
    * All of these are valid examples:
    * <pre>
-   *    "1.0.0-develop"
+   *    "1.0.0-main"
    *    "1"
    *    ".2"
    *    "1.3-some_feature-release_candidate-0"
@@ -404,7 +404,7 @@ public class VersionParser {
    *   </li>
    *   <li>
    *     {@code branch} and the leading hyphon ({@code -}) may be omitted if
-   *     no {@code qualifiers} are given, defaults to {@link Branch#DEVELOP}
+   *     no {@code qualifiers} are given, defaults to {@link Branch#MAIN}
    *   </li>
    *   <li>
    *     {@code qualifiers} and the leading hyphon ({@code -}) may be ommitted
@@ -419,7 +419,7 @@ public class VersionParser {
    * <p>
    * All of these are valid examples:
    * <pre>
-   *    "1.0.0-develop"
+   *    "1.0.0-main"
    *    "1"
    *    ".2"
    *    "1.3-some_feature-release_candidate-0"
