@@ -47,7 +47,7 @@ public class VersionBuilder {
     this.major = new AtomicInteger(0);
     this.minor = new AtomicInteger(0);
     this.incremental = new AtomicInteger(0);
-    this.branch = Branch.DEVELOP;
+    this.branch = Branch.MAIN;
     this.qualifiers = Collections.synchronizedList(new LinkedList<>());
   }
 
@@ -129,7 +129,7 @@ public class VersionBuilder {
   /**
    * Specifies a {@link Branch} to set on {@link Version}s created by this
    * instance.
-   * Otherwise defaults to {@link Branch#DEVELOP}.
+   * Otherwise defaults to {@link Branch#MAIN}.
    *
    * @param branch the branch to set
    * @return this instance
@@ -142,7 +142,7 @@ public class VersionBuilder {
 
   /**
    * Returns the currently set {@link Branch}.
-   * Defaults to {@link Branch#DEVELOP}.
+   * Defaults to {@link Branch#MAIN}.
    *
    * @return the incremental version
    * @see Version#getBranch()

@@ -199,7 +199,7 @@ abstract class VersionParseExecutor<R> {
   /**
    * Adds the {@link #currentItem} as {@code branch} to the
    * {@link #versionBuilder} and advances to the {@link Section#QUALIFIER}.
-   * Defaults to {@link Branch#DEVELOP} if the
+   * Defaults to {@link Branch#MAIN} if the
    * {@link VersionParser.Characteristics#IGNORE_BRANCHES} flag is set.
    *
    * @see VersionBuilder#setBranch(Branch)
@@ -207,6 +207,7 @@ abstract class VersionParseExecutor<R> {
   protected void addBranch() {
     final String branch = this.currentItem.toString();
     if (!VersionParser.Characteristics.IGNORE_BRANCHES.isSet(this.flags)
+        && !branch.equalsIgnoreCase("main")
         && !branch.equalsIgnoreCase("develop")) {
       this.versionBuilder.setBranch(new Branch(branch));
     }

@@ -22,9 +22,25 @@ public class VersionTypesTest {
         VersionTypes.ONLY_DEVELOP_RELEASES.getBranchTypes(),
         "ONLY_DEVELOP_RELEASES should only contain BranchType.DEVELOP");
     Assertions.assertEquals(
+        Set.of(BranchType.MAIN),
+        VersionTypes.ONLY_DEVELOP_RELEASES.getBranchTypes(),
+        "ONLY_DEVELOP_RELEASES should only contain BranchType.MAIN");
+    Assertions.assertEquals(
         Set.of(PublicationStatusType.RELEASES),
         VersionTypes.ONLY_DEVELOP_RELEASES.getPublicationStatusTypes(),
         "ONLY_DEVELOP_RELEASES should only contain PublicationStatusType.RELEASES");
+  }
+
+  @Test
+  public void testOnlyMainReleases() {
+    Assertions.assertEquals(
+        Set.of(BranchType.MAIN),
+        VersionTypes.ONLY_MAIN_RELEASES.getBranchTypes(),
+        "ONLY_MAIN_RELEASES should only contain BranchType.MAIN");
+    Assertions.assertEquals(
+        Set.of(PublicationStatusType.RELEASES),
+        VersionTypes.ONLY_MAIN_RELEASES.getPublicationStatusTypes(),
+        "ONLY_MAIN_RELEASES should only contain PublicationStatusType.RELEASES");
   }
 
   @Test
@@ -34,9 +50,25 @@ public class VersionTypesTest {
         VersionTypes.ONLY_DEVELOP_SNAPSHOTS.getBranchTypes(),
         "ONLY_DEVELOP_SNAPSHOTS should only contain BranchType.DEVELOP");
     Assertions.assertEquals(
+        Set.of(BranchType.MAIN),
+        VersionTypes.ONLY_DEVELOP_SNAPSHOTS.getBranchTypes(),
+        "ONLY_DEVELOP_SNAPSHOTS should only contain BranchType.MAIN");
+    Assertions.assertEquals(
         Set.of(PublicationStatusType.SNAPSHOTS),
         VersionTypes.ONLY_DEVELOP_SNAPSHOTS.getPublicationStatusTypes(),
         "ONLY_DEVELOP_SNAPSHOTS should only contain PublicationStatusType.SNAPSHOTS");
+  }
+
+  @Test
+  public void testOnlyMainSnapshots() {
+    Assertions.assertEquals(
+        Set.of(BranchType.MAIN),
+        VersionTypes.ONLY_MAIN_SNAPSHOTS.getBranchTypes(),
+        "ONLY_MAIN_SNAPSHOTS should only contain BranchType.MAIN");
+    Assertions.assertEquals(
+        Set.of(PublicationStatusType.SNAPSHOTS),
+        VersionTypes.ONLY_MAIN_SNAPSHOTS.getPublicationStatusTypes(),
+        "ONLY_MAIN_SNAPSHOTS should only contain PublicationStatusType.SNAPSHOTS");
   }
 
   @Test
@@ -46,10 +78,28 @@ public class VersionTypesTest {
         VersionTypes.DEVELOP_RELEASES_AND_SNAPSHOTS.getBranchTypes(),
         "DEVELOP_RELEASES_AND_SNAPSHOTS should only contain BranchType.DEVELOP");
     Assertions.assertEquals(
+        Set.of(BranchType.MAIN),
+        VersionTypes.DEVELOP_RELEASES_AND_SNAPSHOTS.getBranchTypes(),
+        "DEVELOP_RELEASES_AND_SNAPSHOTS should only contain BranchType.MAIN");
+    Assertions.assertEquals(
         // order matters!
         Set.of(PublicationStatusType.RELEASES, PublicationStatusType.SNAPSHOTS),
         VersionTypes.DEVELOP_RELEASES_AND_SNAPSHOTS.getPublicationStatusTypes(),
         "DEVELOP_RELEASES_AND_SNAPSHOTS should contain PublicationStatusType.SNAPSHOTS and"
+            + " RELEASES");
+  }
+
+  @Test
+  public void testMainReleasesAndSnapshots() {
+    Assertions.assertEquals(
+        Set.of(BranchType.MAIN),
+        VersionTypes.MAIN_RELEASES_AND_SNAPSHOTS.getBranchTypes(),
+        "MAIN_RELEASES_AND_SNAPSHOTS should only contain BranchType.MAIN");
+    Assertions.assertEquals(
+        // order matters!
+        Set.of(PublicationStatusType.RELEASES, PublicationStatusType.SNAPSHOTS),
+        VersionTypes.MAIN_RELEASES_AND_SNAPSHOTS.getPublicationStatusTypes(),
+        "MAIN_RELEASES_AND_SNAPSHOTS should contain PublicationStatusType.SNAPSHOTS and"
             + " RELEASES");
   }
 
@@ -60,6 +110,11 @@ public class VersionTypesTest {
         Set.of(BranchType.DEVELOP, BranchType.FEATURES),
         VersionTypes.ALL.getBranchTypes(),
         "ALL should contain BranchTypes.DEVELOP and FEATURE");
+    Assertions.assertEquals(
+        // order matters!
+        Set.of(BranchType.MAIN, BranchType.FEATURES),
+        VersionTypes.ALL.getBranchTypes(),
+        "ALL should contain BranchTypes.MAIN and FEATURE");
     Assertions.assertEquals(
         // order matters!
         Set.of(PublicationStatusType.RELEASES, PublicationStatusType.SNAPSHOTS),

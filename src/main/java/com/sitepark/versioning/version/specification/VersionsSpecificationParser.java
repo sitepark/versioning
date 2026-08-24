@@ -31,8 +31,8 @@ import java.text.ParseException;
  *     {@link Version}s are sensitive to {@link Branch}es.  {@code Version}s in
  *     a {@link VersionRangeElement} may define a {@code Branch} (all the same),
  *     which then implies that only {@code Version}s with this {@code Branch}
- *     are included.  The absence of a {@code Branch} and {@code "develop"} are
- *     considered equal.
+ *     are included.  The absence of a {@code Branch} and {@code "main"} (for
+ *     legacy reasons also {@code "develop"}) are considered equal.
  *   </li>
  * </ul>
  *
