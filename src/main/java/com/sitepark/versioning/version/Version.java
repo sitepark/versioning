@@ -49,7 +49,7 @@ public sealed interface Version extends Comparable<Version>
   /**
    * Returns the {@link Branch} of this Version.
    * This is never {@code null}; The absence of a feature branch is denoted
-   * by the {@link Branch#DEVELOP} instance.
+   * by the {@link Branch#MAIN} instance.
    *
    * @return the branch
    */

@@ -29,7 +29,7 @@ public class VersionParserTest {
     Assertions.assertEquals(1, version.getMajor());
     Assertions.assertEquals(2, version.getMinor());
     Assertions.assertEquals(3, version.getIncremental());
-    Assertions.assertEquals(Branch.DEVELOP, version.getBranch());
+    Assertions.assertEquals(Branch.MAIN, version.getBranch());
     Assertions.assertEquals(0, version.getQualifiers().size());
   }
 
@@ -40,7 +40,19 @@ public class VersionParserTest {
     Assertions.assertEquals(1, version.getMajor());
     Assertions.assertEquals(2, version.getMinor());
     Assertions.assertEquals(3, version.getIncremental());
-    Assertions.assertEquals(Branch.DEVELOP, version.getBranch());
+    Assertions.assertEquals(Branch.MAIN, version.getBranch());
+    Assertions.assertEquals("qualifierA", version.getQualifiers().get(0));
+    Assertions.assertEquals("qualifierB", version.getQualifiers().get(1));
+  }
+
+  @Test
+  public void testFullMainRelease() throws ParseException {
+    final ReleaseVersion version =
+        VersionParserTest.PARSER.parseRelease("1.2.3-main-qualifierA-qualifierB");
+    Assertions.assertEquals(1, version.getMajor());
+    Assertions.assertEquals(2, version.getMinor());
+    Assertions.assertEquals(3, version.getIncremental());
+    Assertions.assertEquals(Branch.MAIN, version.getBranch());
     Assertions.assertEquals("qualifierA", version.getQualifiers().get(0));
     Assertions.assertEquals("qualifierB", version.getQualifiers().get(1));
   }
@@ -281,7 +293,7 @@ public class VersionParserTest {
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
-    Assertions.assertEquals(Branch.DEVELOP, snapshot.getBranch());
+    Assertions.assertEquals(Branch.MAIN, snapshot.getBranch());
     Assertions.assertEquals(0, snapshot.getQualifiers().size());
     Assertions.assertEquals("20210101.131313", snapshot.getTimestamp());
     Assertions.assertEquals(123, snapshot.getBuildnumber());
@@ -299,7 +311,26 @@ public class VersionParserTest {
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
-    Assertions.assertEquals(Branch.DEVELOP, snapshot.getBranch());
+    Assertions.assertEquals(Branch.MAIN, snapshot.getBranch());
+    Assertions.assertEquals("qualifierA", snapshot.getQualifiers().get(0));
+    Assertions.assertEquals("qualifierB", snapshot.getQualifiers().get(1));
+    Assertions.assertEquals("20210101.131313", snapshot.getTimestamp());
+    Assertions.assertEquals(123, snapshot.getBuildnumber());
+  }
+
+  @Test
+  public void testConcreteFullMainSnapshot() throws ParseException {
+    final ConcreteVersion version =
+        VersionParserTest.PARSER.parseConcreteVersion(
+            "1.2.3-main-qualifierA-qualifierB-20210101.131313-123");
+    if (!(version instanceof final ConcreteSnapshotVersion snapshot)) {
+      Assertions.fail("expected concrete-snapshot-version");
+      return;
+    }
+    Assertions.assertEquals(1, snapshot.getMajor());
+    Assertions.assertEquals(2, snapshot.getMinor());
+    Assertions.assertEquals(3, snapshot.getIncremental());
+    Assertions.assertEquals(Branch.MAIN, snapshot.getBranch());
     Assertions.assertEquals("qualifierA", snapshot.getQualifiers().get(0));
     Assertions.assertEquals("qualifierB", snapshot.getQualifiers().get(1));
     Assertions.assertEquals("20210101.131313", snapshot.getTimestamp());
@@ -450,7 +481,7 @@ public class VersionParserTest {
     Assertions.assertEquals(0, snapshot.getMajor());
     Assertions.assertEquals(0, snapshot.getMinor());
     Assertions.assertEquals(0, snapshot.getIncremental());
-    Assertions.assertEquals(Branch.DEVELOP, snapshot.getBranch());
+    Assertions.assertEquals(Branch.MAIN, snapshot.getBranch());
     Assertions.assertEquals(0, snapshot.getQualifiers().size());
     Assertions.assertEquals("20210101.131313", snapshot.getTimestamp());
     Assertions.assertEquals(123, snapshot.getBuildnumber());
@@ -640,7 +671,7 @@ public class VersionParserTest {
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
-    Assertions.assertEquals(Branch.DEVELOP, snapshot.getBranch());
+    Assertions.assertEquals(Branch.MAIN, snapshot.getBranch());
     Assertions.assertEquals(0, snapshot.getQualifiers().size());
   }
 
@@ -655,7 +686,23 @@ public class VersionParserTest {
     Assertions.assertEquals(1, snapshot.getMajor());
     Assertions.assertEquals(2, snapshot.getMinor());
     Assertions.assertEquals(3, snapshot.getIncremental());
-    Assertions.assertEquals(Branch.DEVELOP, snapshot.getBranch());
+    Assertions.assertEquals(Branch.MAIN, snapshot.getBranch());
+    Assertions.assertEquals("qualifierA", snapshot.getQualifiers().get(0));
+    Assertions.assertEquals("qualifierB", snapshot.getQualifiers().get(1));
+  }
+
+  @Test
+  public void testFullMainSnapshot() throws ParseException {
+    final BaseVersion version =
+        VersionParserTest.PARSER.parseBaseVersion("1.2.3-main-qualifierA-qualifierB-SNAPSHOT");
+    if (!(version instanceof final SnapshotVersion snapshot)) {
+      Assertions.fail("expected snapshot-version");
+      return;
+    }
+    Assertions.assertEquals(1, snapshot.getMajor());
+    Assertions.assertEquals(2, snapshot.getMinor());
+    Assertions.assertEquals(3, snapshot.getIncremental());
+    Assertions.assertEquals(Branch.MAIN, snapshot.getBranch());
     Assertions.assertEquals("qualifierA", snapshot.getQualifiers().get(0));
     Assertions.assertEquals("qualifierB", snapshot.getQualifiers().get(1));
   }
@@ -782,7 +829,7 @@ public class VersionParserTest {
     Assertions.assertEquals(0, snapshot.getMajor());
     Assertions.assertEquals(0, snapshot.getMinor());
     Assertions.assertEquals(0, snapshot.getIncremental());
-    Assertions.assertEquals(Branch.DEVELOP, snapshot.getBranch());
+    Assertions.assertEquals(Branch.MAIN, snapshot.getBranch());
     Assertions.assertEquals(0, snapshot.getQualifiers().size());
   }
 

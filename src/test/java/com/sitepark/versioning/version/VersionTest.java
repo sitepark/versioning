@@ -77,6 +77,16 @@ public class VersionTest {
   }
 
   @Test
+  public void testMainBranchCompareTo() throws ParseException {
+    final Version smaller = VersionTest.PARSER.parseRelease("1.1.1-Zfeature");
+    final Version bigger = VersionTest.PARSER.parseRelease("1.1.1-main");
+    Assertions.assertTrue(smaller.compareTo(bigger) < 0);
+    Assertions.assertTrue(bigger.compareTo(smaller) > 0);
+    Assertions.assertTrue(smaller.compareTo(smaller) == 0);
+    Assertions.assertTrue(bigger.compareTo(bigger) == 0);
+  }
+
+  @Test
   public void testSnapshotCompareTo() throws ParseException {
     final Version smaller = VersionTest.PARSER.parseBaseVersion("1.1.1-branch-SNAPSHOT");
     final Version bigger = VersionTest.PARSER.parseBaseVersion("1.1.1-branch");

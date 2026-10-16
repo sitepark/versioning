@@ -11,7 +11,7 @@ import java.util.Set;
  * <ul>
  *   <li>{@link PublicationStatusType#RELEASES}</li>
  *   <li>{@link PublicationStatusType#SNAPSHOTS}</li>
- *   <li>{@link BranchType#DEVELOP}</li>
+ *   <li>{@link BranchType#MAIN}</li>
  *   <li>{@link BranchType#FEATURES}</li>
  * </ul>
  * A VersionTypes instance may include any number of these.
@@ -107,12 +107,12 @@ public final class VersionTypes {
    * {@link Version}s by their {@link Branch}.
    * A {@code Version} will always fall into exactly one of these categories:
    * <ul>
-   *   <li>{@link BranchType#DEVELOP}</li>
+   *   <li>{@link BranchType#MAIN}</li>
    *   <li>{@link BranchType#FEATURES}</li>
    * </ul>
    *
    * @see Version#getBranch
-   * @see Branch#isDevelop()
+   * @see Branch#isMain()
    * @see Branch#isFeature()
    */
   public static final class BranchType extends Type {
@@ -120,9 +120,18 @@ public final class VersionTypes {
      * Represents {@link Version}s with a "non-feature-branch" in
      * {@link VersionTypes}.
      *
-     * @see Branch#isDevelop()
+     * @see Branch#isMain()
      */
-    public static final BranchType DEVELOP = new BranchType("develop", 0b0000_0100);
+    public static final BranchType MAIN = new BranchType("main", 0b0000_0100);
+
+    /**
+     * Represents {@link Version}s with a "non-feature-branch" in
+     * {@link VersionTypes}.
+     *
+     * @deprecated use {@link #MAIN} instead
+     */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public static final BranchType DEVELOP = BranchType.MAIN;
 
     /**
      * Represents {@link Version}s with a "feature-branch" in
@@ -142,14 +151,14 @@ public final class VersionTypes {
     /**
      * Returns an array of all instances, which are:
      * <ul>
-     *   <li>{@link BranchType#DEVELOP}</li>
+     *   <li>{@link BranchType#MAIN}</li>
      *   <li>{@link BranchType#FEATURES}</li>
      * </ul>
      *
      * @return all {@code BranchType} instances
      */
     public static BranchType[] values() {
-      return new BranchType[] {BranchType.DEVELOP, BranchType.FEATURES};
+      return new BranchType[] {BranchType.MAIN, BranchType.FEATURES};
     }
   }
 
@@ -159,28 +168,58 @@ public final class VersionTypes {
   public static final VersionTypes NONE = new VersionTypes((byte) 0b0000_0000);
 
   /**
-   * Instance that includes exactly {@link BranchType#DEVELOP}
+   * Instance that includes exactly {@link BranchType#MAIN}
    * and {@link PublicationStatusType#RELEASES}.
    */
-  public static final VersionTypes ONLY_DEVELOP_RELEASES =
-      new VersionTypes(BranchType.DEVELOP, PublicationStatusType.RELEASES);
+  public static final VersionTypes ONLY_MAIN_RELEASES =
+      new VersionTypes(BranchType.MAIN, PublicationStatusType.RELEASES);
 
   /**
-   * Instance that includes exactly {@link BranchType#DEVELOP}
+   * Instance that includes exactly {@link BranchType#MAIN}
+   * and {@link PublicationStatusType#RELEASES}.
+   *
+   * @deprecated use {@link #ONLY_MAIN_RELEASES} instead
+   */
+  @Deprecated(since = "3.1.0", forRemoval = true)
+  public static final VersionTypes ONLY_DEVELOP_RELEASES = VersionTypes.ONLY_MAIN_RELEASES;
+
+  /**
+   * Instance that includes exactly {@link BranchType#MAIN}
    * and {@link PublicationStatusType#SNAPSHOTS}.
    */
-  public static final VersionTypes ONLY_DEVELOP_SNAPSHOTS =
-      new VersionTypes(BranchType.DEVELOP, PublicationStatusType.SNAPSHOTS);
+  public static final VersionTypes ONLY_MAIN_SNAPSHOTS =
+      new VersionTypes(BranchType.MAIN, PublicationStatusType.SNAPSHOTS);
 
   /**
-   * Instance that includes exactly {@link BranchType#DEVELOP},
+   * Instance that includes exactly {@link BranchType#MAIN}
+   * and {@link PublicationStatusType#SNAPSHOTS}.
+   *
+   * @deprecated use {@link #ONLY_MAIN_SNAPSHOTS} instead
+   */
+  @Deprecated(since = "3.1.0", forRemoval = true)
+  public static final VersionTypes ONLY_DEVELOP_SNAPSHOTS = VersionTypes.ONLY_MAIN_SNAPSHOTS;
+
+  /**
+   * Instance that includes exactly {@link BranchType#MAIN},
    * {@link PublicationStatusType#RELEASES} and
    * {@link PublicationStatusType#SNAPSHOTS}.
    * This excludes only {@link BranchType#FEATURES}.
    */
-  public static final VersionTypes DEVELOP_RELEASES_AND_SNAPSHOTS =
+  public static final VersionTypes MAIN_RELEASES_AND_SNAPSHOTS =
       new VersionTypes(
-          BranchType.DEVELOP, PublicationStatusType.RELEASES, PublicationStatusType.SNAPSHOTS);
+          BranchType.MAIN, PublicationStatusType.RELEASES, PublicationStatusType.SNAPSHOTS);
+
+  /**
+   * Instance that includes exactly {@link BranchType#MAIN},
+   * {@link PublicationStatusType#RELEASES} and
+   * {@link PublicationStatusType#SNAPSHOTS}.
+   * This excludes only {@link BranchType#FEATURES}.
+   *
+   * @deprecated use {@link #MAIN_RELEASES_AND_SNAPSHOTS} instead
+   */
+  @Deprecated(since = "3.1.0", forRemoval = true)
+  public static final VersionTypes DEVELOP_RELEASES_AND_SNAPSHOTS =
+      VersionTypes.MAIN_RELEASES_AND_SNAPSHOTS;
 
   /**
    * Instance that includes all {@link Type}s.
@@ -283,11 +322,11 @@ public final class VersionTypes {
   public Set<BranchType> getBranchTypes() {
     switch (this.value & 0b0000_1100) {
       case 0b0000_0100:
-        return Set.of(BranchType.DEVELOP);
+        return Set.of(BranchType.MAIN);
       case 0b0000_1000:
         return Set.of(BranchType.FEATURES);
       case 0b0000_1100:
-        return Set.of(BranchType.DEVELOP, BranchType.FEATURES);
+        return Set.of(BranchType.MAIN, BranchType.FEATURES);
       default:
         return Set.of();
     }
@@ -311,14 +350,14 @@ public final class VersionTypes {
       case 0b0000_0011:
         return Set.of(PublicationStatusType.RELEASES, PublicationStatusType.SNAPSHOTS);
       case 0b0000_0100:
-        return Set.of(BranchType.DEVELOP);
+        return Set.of(BranchType.MAIN);
       case 0b0000_0101:
-        return Set.of(PublicationStatusType.RELEASES, BranchType.DEVELOP);
+        return Set.of(PublicationStatusType.RELEASES, BranchType.MAIN);
       case 0b0000_0110:
-        return Set.of(PublicationStatusType.SNAPSHOTS, BranchType.DEVELOP);
+        return Set.of(PublicationStatusType.SNAPSHOTS, BranchType.MAIN);
       case 0b0000_0111:
         return Set.of(
-            PublicationStatusType.RELEASES, PublicationStatusType.SNAPSHOTS, BranchType.DEVELOP);
+            PublicationStatusType.RELEASES, PublicationStatusType.SNAPSHOTS, BranchType.MAIN);
       case 0b0000_1000:
         return Set.of(BranchType.FEATURES);
       case 0b0000_1001:
@@ -329,16 +368,16 @@ public final class VersionTypes {
         return Set.of(
             PublicationStatusType.RELEASES, PublicationStatusType.SNAPSHOTS, BranchType.FEATURES);
       case 0b0000_1100:
-        return Set.of(BranchType.DEVELOP, BranchType.FEATURES);
+        return Set.of(BranchType.MAIN, BranchType.FEATURES);
       case 0b0000_1101:
-        return Set.of(PublicationStatusType.RELEASES, BranchType.DEVELOP, BranchType.FEATURES);
+        return Set.of(PublicationStatusType.RELEASES, BranchType.MAIN, BranchType.FEATURES);
       case 0b0000_1110:
-        return Set.of(PublicationStatusType.SNAPSHOTS, BranchType.DEVELOP, BranchType.FEATURES);
+        return Set.of(PublicationStatusType.SNAPSHOTS, BranchType.MAIN, BranchType.FEATURES);
       case 0b0000_1111:
         return Set.of(
             PublicationStatusType.RELEASES,
             PublicationStatusType.SNAPSHOTS,
-            BranchType.DEVELOP,
+            BranchType.MAIN,
             BranchType.FEATURES);
       default:
         return Set.of();
