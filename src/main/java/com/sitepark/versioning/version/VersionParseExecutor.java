@@ -206,10 +206,11 @@ abstract class VersionParseExecutor<R> {
    */
   protected void addBranch() {
     final String branch = this.currentItem.toString();
-    if (!VersionParser.Characteristics.IGNORE_BRANCHES.isSet(this.flags)
-        && !branch.equalsIgnoreCase("main")
-        && !branch.equalsIgnoreCase("develop")) {
-      this.versionBuilder.setBranch(new Branch(branch));
+    if (!VersionParser.Characteristics.IGNORE_BRANCHES.isSet(this.flags)) {
+      final Branch parsed = new Branch(branch);
+      if (parsed.isFeature()) {
+        this.versionBuilder.setBranch(parsed);
+      }
     }
     this.resetCurrentItem();
     this.currentSection = Section.QUALIFIER;
