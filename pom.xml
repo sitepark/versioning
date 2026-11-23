@@ -4,7 +4,7 @@
 
 	<groupId>com.sitepark</groupId>
 	<artifactId>versioning</artifactId>
-	<version>3.1.0</version>
+	<version>3.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Sitepark Versioning</name>
@@ -41,7 +41,7 @@
 	<scm>
 		<connection>scm:git:git@github.com:sitepark/versioning.git</connection>
 		<developerConnection>scm:git:git@github.com:sitepark/versioning.git</developerConnection>
-		<tag>3.1.0</tag>
+		<tag>HEAD</tag>
 		<url>https://github.com/sitepark/versioning</url>
 	</scm>
 
