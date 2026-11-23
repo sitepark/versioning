@@ -281,16 +281,6 @@
 						</googleJavaFormat>
 						<formatAnnotations/>
 					</java>
-					<pom>
-						<!-- These are the defaults, you can override if you want -->
-						<includes>
-							<include>pom.xml</include>
-						</includes>
-						<sortPom>
-							<!--  value of -1 indicates that a tab character should be used instead -->
-							<nrOfIndentSpace>-1</nrOfIndentSpace>
-						</sortPom>
-					</pom>
 				</configuration>
 				<executions>
 					<execution>
