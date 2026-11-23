@@ -234,6 +234,8 @@
 				<configuration>
 					<scmCommentPrefix>ci(release):</scmCommentPrefix>
 					<tagNameFormat>@{project.version}</tagNameFormat>
+					<!-- profiles given on the command line do not reliably reach the forked release:perform build -->
+					<releaseProfiles>publish-release</releaseProfiles>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -371,6 +373,9 @@
 	<profiles>
 		<profile>
 			<id>publish-release</id>
+			<properties>
+				<gpg.skip>false</gpg.skip>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
